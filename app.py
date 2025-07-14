@@ -3,7 +3,7 @@ import sqlite3
 import os
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key_here'  # 🔐 заміни на свій секретний ключ
+app.secret_key = 'your_secret_key_here'  # 🔐 Замінити на власний ключ без лапок
 
 DB_NAME = 'data.db'
 
@@ -31,7 +31,7 @@ def init_db():
                 created_by TEXT
             )
         ''')
-        # Створення користувачів (якщо їх ще немає)
+        # Додавання користувачів, якщо їх ще нема
         c.execute("SELECT * FROM users WHERE username = 'alina01'")
         if not c.fetchone():
             c.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
@@ -93,7 +93,7 @@ def add_subscriber():
 
 @app.route('/subscribers')
 def show_subscribers():
-    if 'username' not in session or session['role'] != 'admin':
+    if 'username' not in session or session['role'] not in ['admin', 'operator']:
         return "Доступ заборонено"
     with sqlite3.connect(DB_NAME) as conn:
         c = conn.cursor()
