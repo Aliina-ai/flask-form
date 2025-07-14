@@ -17,11 +17,14 @@
             margin: auto;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        input, textarea {
+        select, input, textarea {
             width: 100%;
             margin-bottom: 15px;
             padding: 10px;
             font-size: 16px;
+        }
+        select[multiple] {
+            height: 120px;
         }
         input[type="submit"] {
             background: #3399ff;
@@ -37,12 +40,27 @@
 <body>
     <form method="POST">
         <h2>Додати великий округ</h2>
-        Номер округу: <input type="number" name="district_number" required>
+
+        Округ:
+        <select name="district_number" required>
+            <option value="" disabled selected>Оберіть округ</option>
+            {% for i in range(1, 7) %}
+                <option value="{{ i }}">Округ {{ i }}</option>
+            {% endfor %}
+        </select>
+
         Прізвище: <input type="text" name="last_name" required>
         Імʼя: <input type="text" name="first_name" required>
         По батькові: <input type="text" name="middle_name" required>
         Телефон: <input type="text" name="phone" required>
-        Точки видачі газети: <textarea name="pickup_points" rows="3" required></textarea>
+
+        Точки видачі газети (утримуйте Ctrl для вибору кількох):
+        <select name="pickup_points" multiple required>
+            {% for i in range(1, 21) %}
+                <option value="Т{{ i }}">Т{{ i }}</option>
+            {% endfor %}
+        </select>
+
         <input type="submit" value="Зберегти">
     </form>
 </body>
