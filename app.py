@@ -86,6 +86,12 @@ def login():
                 error = "Невірний логін або пароль"
     return render_template('login.html', error=error)
 
+@app.route('/home')
+def home():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    return render_template('home.html')
+
 # Вихід
 @app.route('/logout')
 def logout():
