@@ -54,10 +54,10 @@
         По батькові: <input type="text" name="middle_name" required>
         Телефон: <input type="text" name="phone" required>
 
-        Точки видачі газети (утримуйте Ctrl для вибору кількох):
+        <label for="pickup_points">Точки видачі газети (утримуйте Ctrl для кількох):</label>
         <select name="pickup_points" multiple required>
             {% for i in range(1, 21) %}
-                <option value="Т{{ i }}">Т{{ i }}</option>
+            <option value="Т{{ i }}">Т{{ i }}</option>
             {% endfor %}
         </select>
 
