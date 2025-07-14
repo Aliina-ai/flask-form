@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Великі округи</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f8fcff;
+            padding: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background: #3399ff;
+            color: white;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        a {
+            display: block;
+            text-align: center;
+            margin: 15px;
+            color: #3399ff;
+        }
+    </style>
+</head>
+<body>
+    <h2>Список великих округів</h2>
+    <table>
+        <tr>
+            <th>Округ</th>
+            <th>ПІБ</th>
+            <th>Телефон</th>
+            <th>Точки видачі</th>
+        </tr>
+        {% for d in districts %}
+        <tr>
+            <td>{{ d[1] }}</td>
+            <td>{{ d[2] }} {{ d[3] }} {{ d[4] }}</td>
+            <td>{{ d[5] }}</td>
+            <td>{{ d[6] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="/add_big">➕ Додати округ</a>
+    <a href="/add">🔙 Назад</a>
+</body>
+</html>
