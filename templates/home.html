@@ -7,14 +7,37 @@
         body {
             font-family: 'Segoe UI', sans-serif;
             background: linear-gradient(to right, #f0f8ff, #ffffff);
-            text-align: center;
-            padding-top: 80px;
+            margin: 0;
+            padding: 0;
         }
+        .logout-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #3399ff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .logout-button:hover {
+            background-color: #267bd9;
+        }
+
+        .container {
+            text-align: center;
+            padding-top: 100px;
+        }
+
         h1 {
             color: #333;
             font-size: 32px;
             margin-bottom: 30px;
         }
+
         .menu {
             display: inline-block;
             padding: 30px;
@@ -22,6 +45,7 @@
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
         }
+
         .menu a {
             display: block;
             margin: 15px 0;
@@ -33,29 +57,26 @@
             font-weight: bold;
             transition: background-color 0.3s ease;
         }
+
         .menu a:hover {
             background-color: #267bd9;
-        }
-        .logout {
-            margin-top: 40px;
-            display: inline-block;
-            color: #999;
-            text-decoration: none;
-            font-size: 14px;
         }
     </style>
 </head>
 <body>
-    <h1>👋 Вітаємо, {{ session.username }}!</h1>
+    <!-- Кнопка "Вийти" у верхньому лівому куті -->
+    <a class="logout-button" href="/logout">🚪 Вийти</a>
 
-    <div class="menu">
-        <h2>📋 Анкета</h2>
-        <a href="/big_list">Великі округи</a>
-        <a href="/small_list">Малі округи</a>
-        <a href="/elders_list">Старші</a>
-        <a href="/subscribers">Підписники</a>
+    <div class="container">
+        <h1>👋 Вітаємо, {{ session.username }}!</h1>
+
+        <div class="menu">
+            <h2>📋 Анкета</h2>
+            <a href="/big_list">Великі округи</a>
+            <a href="/small_list">Малі округи</a>
+            <a href="/elders_list">Старші</a>
+            <a href="/subscribers">Підписники</a>
+        </div>
     </div>
-
-    <a class="logout" href="/logout">Вийти з акаунту</a>
 </body>
 </html>
