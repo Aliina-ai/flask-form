@@ -142,7 +142,8 @@ def add_big():
         first_name = request.form['first_name']
         middle_name = request.form['middle_name']
         phone = request.form['phone']
-        pickup_points = request.form['pickup_points']
+        pickup_points_list = request.form.getlist('pickup_points')
+        pickup_points = ', '.join(pickup_points_list)
         with sqlite3.connect(DB_NAME) as conn:
             c = conn.cursor()
             c.execute('''
