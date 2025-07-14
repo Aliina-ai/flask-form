@@ -122,7 +122,7 @@ def show_subscribers():
     with sqlite3.connect(DB_NAME) as conn:
         c = conn.cursor()
         c.execute("SELECT * FROM subscribers")
-subscribers = c.fetchall()
+        subscribers = c.fetchall()
     return render_template('subscribers.html', subscribers=subscribers)
 
 # Додати великий округ
