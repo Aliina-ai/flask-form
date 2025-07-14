@@ -108,7 +108,7 @@ def add_subscriber():
             c = conn.cursor()
             c.execute('''
                 INSERT INTO subscribers (name, address, phone, newspaper, term, created_by)
-                VALUES (?, ?, ?, ?, ?, ?)
+                VALUES (1, 2, 3, 4, 5, 6)
             ''', (name, address, phone, newspaper, term, created_by))
             conn.commit()
         return "Підписника додано!"
@@ -143,7 +143,7 @@ def add_big():
                 INSERT INTO big_districts (
                     district_number, last_name, first_name,
                     middle_name, phone, pickup_points
-                ) VALUES (?, ?, ?, ?, ?, ?)
+                ) VALUES (1, 2, 3, 4, 5, 6)
             ''', (district_number, last_name, first_name, middle_name, phone, pickup_points))
             conn.commit()
         return "Округ додано успішно!"
