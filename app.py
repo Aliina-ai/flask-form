@@ -65,7 +65,7 @@ def init_db():
 def index():
     if 'username' not in session:
         return redirect(url_for('login'))
-    return redirect(url_for('add_subscriber'))
+    return redirect(url_for('home'))
 
 # Вхід
 @app.route('/login', methods=['GET', 'POST'])
