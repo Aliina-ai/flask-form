@@ -99,6 +99,54 @@ def add_big():
 
     return render_template('add_big.html', districts=districts, locations=locations)
 
+# 🗑️ Видалення відповідального
+@app.route('/delete_big/<int:id>', methods=['POST'])
+def delete_big(id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    c.execute("DELETE FROM big_districts WHERE id = ?", (id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('big_list'))
+
+# ✏️ Редагування відповідального
+@app.route('/edit_big/<int:id>', methods=['GET', 'POST'])
+def edit_big(id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+
+    if request.method == 'POST':
+        district_number = request.form['district_number']
+        last_name = request.form['last_name']
+        first_name = request.form['first_name']
+        middle_name = request.form['middle_name']
+        phone = request.form['phone']
+        pickup_points = ', '.join(request.form.getlist('pickup_points'))
+
+        c.execute('''UPDATE big_districts 
+                     SET district_number=?, last_name=?, first_name=?, middle_name=?, phone=?, pickup_points=? 
+                     WHERE id=?''',
+                  (district_number, last_name, first_name, middle_name, phone, pickup_points, id))
+        conn.commit()
+        conn.close()
+        return redirect(url_for('big_list'))
+
+    c.execute("SELECT * FROM big_districts WHERE id = ?", (id,))
+    big = c.fetchone()
+    conn.close()
+
+    districts = [str(i) for i in range(1, 7)]
+    locations = [f'Л{i}' for i in range(1, 21)]
+    selected_locations = big[6].split(', ') if big[6] else []
+
+    return render_template('edit_big.html', big=big, districts=districts, locations=locations, selected_locations=selected_locations)
+
 # ========== Заглушки для решти ==========
 @app.route('/small_list')
 def small_list():
