@@ -81,7 +81,7 @@ def login():
             if user:
                 session['username'] = username
                 session['role'] = user[3]
-                return redirect(url_for('add_subscriber'))
+                return redirect(url_for('home'))
             else:
                 error = "Невірний логін або пароль"
     return render_template('login.html', error=error)
