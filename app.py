@@ -57,37 +57,6 @@ def home():
         return redirect(url_for('login'))
     return render_template('home.html')
 
-# ========== Додавання ВЕЛИКИХ округів ==========
-@app.route('/add_big', methods=['GET', 'POST'])
-def add_big():
-    if 'user' not in session:
-        return redirect(url_for('login'))  # <- дуже важливо, не прибирай!
-
-    # Списки для випадаючих полів
-    districts = [str(i) for i in range(1, 7)]
-    locations = [f'Л{i}' for i in range(1, 21)]
-
-    if request.method == 'POST':
-        district_number = request.form['district_number']
-        last_name = request.form['last_name']
-        first_name = request.form['first_name']
-        middle_name = request.form['middle_name']
-        phone = request.form['phone']
-        pickup_points = ', '.join(request.form.getlist('pickup_points'))
-
-        conn = sqlite3.connect('database.db')
-        c = conn.cursor()
-        c.execute('''INSERT INTO big_districts 
-                     (district_number, last_name, first_name, middle_name, phone, pickup_points) 
-                     VALUES (?, ?, ?, ?, ?, ?)''',
-                  (district_number, last_name, first_name, middle_name, phone, pickup_points))
-        conn.commit()
-        conn.close()
-
-        return redirect(url_for('big_list'))
-
-    return render_template('add_big.html', districts=districts, locations=locations)
-    
 # ========== Список ВЕЛИКИХ округів ==========
 @app.route('/big_list')
 def big_list():
