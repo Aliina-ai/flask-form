@@ -2,81 +2,111 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Головна</title>
+    <title>Головне меню</title>
     <style>
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(to right, #f0f8ff, #ffffff);
+            font-family: "Segoe UI", sans-serif;
+            background-color: #f4f6f9;
+            color: #2c2c2c;
             margin: 0;
             padding: 0;
         }
-        .logout-button {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            padding: 10px 20px;
-            background-color: #3399ff;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
+
+        .navbar {
+            background-color: #2d6ca2;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .logout-button:hover {
-            background-color: #267bd9;
+
+        .navbar h1 {
+            color: white;
+            font-size: 22px;
+            margin: 0;
+        }
+
+        .logout-btn {
+            background-color: #ffffff;
+            color: #2d6ca2;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .logout-btn:hover {
+            background-color: #e6e6e6;
         }
 
         .container {
-            text-align: center;
-            padding-top: 100px;
-        }
-
-        h1 {
-            color: #333;
-            font-size: 32px;
-            margin-bottom: 30px;
-        }
-
-        .menu {
-            display: inline-block;
+            max-width: 800px;
+            margin: 50px auto;
             padding: 30px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
         }
 
-        .menu a {
-            display: block;
-            margin: 15px 0;
-            padding: 12px 25px;
-            background-color: #3399ff;
-            color: white;
-            border-radius: 6px;
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2d6ca2;
+        }
+
+        .menu-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .menu-buttons a {
             text-decoration: none;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
         }
 
-        .menu a:hover {
-            background-color: #267bd9;
+        .menu-buttons button {
+            background-color: #2d6ca2;
+            color: white;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            width: 220px;
+            text-align: center;
+        }
+
+        .menu-buttons button:hover {
+            background-color: #204d74;
         }
     </style>
 </head>
 <body>
-    <!-- Кнопка "Вийти" у верхньому лівому куті -->
-    <a class="logout-button" href="/logout">🚪 Вийти</a>
+
+    <div class="navbar">
+        <h1>Система обліку підписників</h1>
+        <form action="{{ url_for('logout') }}" method="post">
+            <button type="submit" class="logout-btn">🚪 Вийти</button>
+        </form>
+    </div>
 
     <div class="container">
-        <h1>👋 Вітаємо, {{ session.username }}!</h1>
-
-        <div class="menu">
-            <h2>📋 Анкета</h2>
-            <a href="/big_list">Великі округи</a>
-            <a href="/small_list">Малі округи</a>
-            <a href="/elders_list">Старші</a>
-            <a href="/subscribers">Підписники</a>
+        <h2>Оберіть тип анкети</h2>
+        <div class="menu-buttons">
+            <a href="{{ url_for('add_big') }}"><button>Великі округи</button></a>
+            <a href="{{ url_for('add_small') }}"><button>Малі округи</button></a>
+            <a href="{{ url_for('add_elder') }}"><button>Старші</button></a>
+            <a href="{{ url_for('add_subscriber') }}"><button>Підписники</button></a>
         </div>
     </div>
+
 </body>
 </html>
