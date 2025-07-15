@@ -87,6 +87,7 @@ def add_big():
         return redirect(url_for('big_list'))
 
     return render_template('add_big.html', districts=districts, locations=locations)
+    
 # ========== Список ВЕЛИКИХ округів ==========
 @app.route('/big_list')
 def big_list():
