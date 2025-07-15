@@ -5,7 +5,7 @@
     <title>Додати великий округ</title>
     <style>
         body {
-            font-family: Arial;
+            font-family: Arial, sans-serif;
             background: #f5faff;
             padding: 40px;
         }
@@ -23,17 +23,35 @@
             padding: 10px;
             font-size: 16px;
         }
-        select[multiple] {
-            height: 120px;
-        }
-        input[type="submit"] {
-            background: #3399ff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
         h2 {
             text-align: center;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #3399ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #267bd9;
+        }
+        .flex-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        #pickup_container div {
+            margin-bottom: 5px;
+        }
+        #pickup_container button {
+            margin-left: 10px;
+            background-color: #ff6666;
+        }
+        #pickup_container button:hover {
+            background-color: #cc0000;
         }
     </style>
 </head>
@@ -49,19 +67,66 @@
             {% endfor %}
         </select>
 
-        Прізвище: <input type="text" name="last_name" required>
-        Імʼя: <input type="text" name="first_name" required>
-        По батькові: <input type="text" name="middle_name" required>
-        Телефон: <input type="text" name="phone" required>
+        Прізвище:
+        <input type="text" name="last_name" required>
 
-        <label for="pickup_points">Точки видачі газети (утримуйте Ctrl для кількох):</label>
-        <select name="pickup_points" multiple required>
-            {% for i in range(1, 21) %}
-            <option value="Т{{ i }}">Т{{ i }}</option>
-            {% endfor %}
-        </select>
+        Імʼя:
+        <input type="text" name="first_name" required>
+
+        По батькові:
+        <input type="text" name="middle_name" required>
+
+        Телефон:
+        <input type="text" name="phone" required>
+
+        <label for="pickup_select">Оберіть локацію:</label>
+        <div class="flex-row">
+            <select id="pickup_select">
+                {% for i in range(1, 21) %}
+                    <option value="Л{{ i }}">Л{{ i }}</option>
+                {% endfor %}
+            </select>
+            <button type="button" onclick="addPickup()">➕ Додати</button>
+        </div>
+
+        <div id="pickup_container"></div>
+
+        <!-- Приховане поле для передачі в Flask -->
+        <input type="hidden" name="pickup_points" id="pickup_points_input">
 
         <input type="submit" value="Зберегти">
     </form>
+
+    <script>
+        let selectedPickups = [];
+
+        function addPickup() {
+            const select = document.getElementById('pickup_select');
+            const selected = select.value;
+
+            if (!selectedPickups.includes(selected)) {
+                selectedPickups.push(selected);
+                updatePickupDisplay();
+            }
+        }
+
+        function removePickup(index) {
+            selectedPickups.splice(index, 1);
+            updatePickupDisplay();
+        }
+
+        function updatePickupDisplay() {
+            const container = document.getElementById('pickup_container');
+            container.innerHTML = "";
+
+            selectedPickups.forEach((item, index) => {
+                const div = document.createElement("div");
+                div.innerHTML = ${item} <button type="button" onclick="removePickup(${index})">❌</button>;
+                container.appendChild(div);
+            });
+
+            document.getElementById('pickup_points_input').value = selectedPickups.join(', ');
+        }
+    </script>
 </body>
 </html>
