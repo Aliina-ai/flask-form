@@ -2,134 +2,128 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Великі округи</title>
+    <title>Додати великий округ</title>
     <style>
         body {
             font-family: "Segoe UI", sans-serif;
             background-color: #f4f6f9;
-            color: #2c2c2c;
             margin: 0;
             padding: 0;
         }
 
-        .navbar {
+        .header {
             background-color: #2d6ca2;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .navbar h1 {
             color: white;
-            font-size: 22px;
-            margin: 0;
-        }
-
-        .logout-btn {
-            background-color: #ffffff;
-            color: #2d6ca2;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 4px;
-            font-weight: 500;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .logout-btn:hover {
-            background-color: #e6e6e6;
+            padding: 20px;
+            text-align: center;
         }
 
         .container {
-            max-width: 1000px;
-            margin: 50px auto;
+            max-width: 700px;
+            margin: 40px auto;
+            background: white;
             padding: 30px;
-            background-color: white;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.05);
         }
 
         h2 {
+            color: #2d6ca2;
             text-align: center;
             margin-bottom: 30px;
-            color: #2d6ca2;
         }
 
-        table {
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        select {
             width: 100%;
-            border-collapse: collapse;
-            font-size: 15px;
-        }
-
-        th, td {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
             border: 1px solid #ccc;
-            padding: 12px;
-            text-align: left;
+            font-size: 14px;
         }
 
-        th {
-            background-color: #e6e6e6;
-            font-weight: 600;
+        .multi-select {
+            height: 120px;
         }
 
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .back-link {
-            display: inline-block;
-            margin-top: 25px;
-            text-decoration: none;
+        button, .btn-back {
             background-color: #2d6ca2;
             color: white;
             padding: 10px 20px;
-            border-radius: 5px;
+            text-decoration: none;
             font-weight: 500;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
         }
 
-        .back-link:hover {
+        button:hover,
+        .btn-back:hover {
             background-color: #204d74;
+        }
+
+        .btn-back {
+            display: inline-block;
         }
     </style>
 </head>
 <body>
 
-    <div class="navbar">
-        <h1>Список великих округів</h1>
-        <form action="{{ url_for('logout') }}" method="post">
-            <button type="submit" class="logout-btn">🚪 Вийти</button>
-        </form>
+    <div class="header">
+        <h1>Додати великий округ</h1>
     </div>
 
     <div class="container">
-        <h2>Відповідальні за великі округи</h2>
+        <h2>Анкета відповідального</h2>
+        <form method="POST">
 
-        <table>
-            <tr>
-                <th>Округ</th>
-                <th>Прізвище</th>
-                <th>Імʼя</th>
-                <th>По батькові</th>
-                <th>Телефон</th>
-                <th>Локації</th>
-            </tr>
-            {% for row in bigs %}
-            <tr>
-                <td>{{ row[1] }}</td>
-                <td>{{ row[2] }}</td>
-                <td>{{ row[3] }}</td>
-                <td>{{ row[4] }}</td>
-                <td>{{ row[5] }}</td>
-                <td>{{ row[6] }}</td>
-            </tr>
-            {% endfor %}
-        </table>
+            <label for="district_number">Округ</label>
+            <select name="district_number" required>
+                {% for d in districts %}
+                    <option value="{{ d }}">{{ d }}</option>
+                {% endfor %}
+            </select>
 
-        <a href="{{ url_for('home') }}" class="back-link">⬅️ Назад до меню</a>
+            <label for="last_name">Прізвище</label>
+            <input type="text" name="last_name" required>
+
+            <label for="first_name">Імʼя</label>
+            <input type="text" name="first_name" required>
+
+            <label for="middle_name">По батькові</label>
+            <input type="text" name="middle_name" required>
+
+            <label for="phone">Телефон</label>
+            <input type="tel" name="phone" required>
+
+            <label for="pickup_points">Локації видачі</label>
+            <select name="pickup_points" multiple class="multi-select">
+                {% for l in locations %}
+                    <option value="{{ l }}">{{ l }}</option>
+                {% endfor %}
+            </select>
+
+            <div class="button-group">
+                <a href="{{ url_for('big_list') }}" class="btn-back">← Назад</a>
+                <button type="submit">Зберегти</button>
+            </div>
+        </form>
     </div>
 
 </body>
