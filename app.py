@@ -119,7 +119,7 @@ def subscriber_list():
     return "Список підписників (тимчасово)"
 
 # ========== Запуск ==========
-if name == '__main__':
+if __name__ == '__main__':
     init_db()  # ⬅️ Перший запуск створює базу
     port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port)
