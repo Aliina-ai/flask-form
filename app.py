@@ -161,6 +161,14 @@ def big_list():
 
     return render_template('big_list.html', districts=districts)
 
+@app.route('/add_small')
+def add_small():
+    return "Сторінка для малих округів ще в розробці."
+
+@app.route('/add_elder')
+def add_elder():
+    return "Сторінка для старших ще в розробці."
+
 if __name__ == '__main__':
     init_db()
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 10000)), debug=True)
