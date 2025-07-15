@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Головне меню</title>
+    <title>Головна сторінка</title>
     <style>
         body {
             font-family: "Segoe UI", sans-serif;
@@ -24,6 +24,11 @@
             color: white;
             font-size: 22px;
             margin: 0;
+        }
+
+        .logout-container {
+            display: flex;
+            align-items: center;
         }
 
         .logout-btn {
@@ -92,10 +97,10 @@
 <body>
 
     <div class="navbar">
-        <h1>Система обліку підписників</h1>
-        <form action="{{ url_for('logout') }}" method="post">
+        <form action="{{ url_for('logout') }}" method="post" class="logout-container">
             <button type="submit" class="logout-btn">🚪 Вийти</button>
         </form>
+        <h1>Система обліку підписників</h1>
     </div>
 
     <div class="container">
