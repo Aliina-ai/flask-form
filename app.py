@@ -113,6 +113,17 @@ def subscriber_list():
     # додаватимемо пізніше
     return "Список підписників (тимчасово)"
 
+@app.route('/small_list')
+def small_list():
+    return "Список малих округів (тимчасово)"
+
+@app.route('/elder_list')
+def elder_list():
+    return "Список старших (тимчасово)"
+
+@app.route('/subscriber_list')
+def subscriber_list():
+    return "Список підписників (тимчасово)"
 
 # ========== Запуск ==========
 if __name__ == '__main__':
