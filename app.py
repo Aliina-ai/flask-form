@@ -60,8 +60,12 @@ def home():
 # ========== Додавання ВЕЛИКИХ округів ==========
 @app.route('/add_big', methods=['GET', 'POST'])
 def add_big():
-    if 'username' not in session:
+    if 'user' not in session:
         return redirect(url_for('login'))
+
+    # Випадаючі списки
+    districts = [str(i) for i in range(1, 7)]         # 1–6 округів
+    locations = [f'Л{i}' for i in range(1, 21)]       # Л1–Л20
 
     if request.method == 'POST':
         district_number = request.form['district_number']
@@ -69,19 +73,20 @@ def add_big():
         first_name = request.form['first_name']
         middle_name = request.form['middle_name']
         phone = request.form['phone']
-        pickup_points = request.form['pickup_points']
+        pickup_points = ', '.join(request.form.getlist('pickup_points'))
 
         conn = sqlite3.connect('database.db')
         c = conn.cursor()
-        c.execute('INSERT INTO big_districts (district_number, last_name, first_name, middle_name, phone, pickup_points) VALUES (?, ?, ?, ?, ?, ?)',
+        c.execute('''INSERT INTO big_districts 
+                     (district_number, last_name, first_name, middle_name, phone, pickup_points) 
+                     VALUES (?, ?, ?, ?, ?, ?)''',
                   (district_number, last_name, first_name, middle_name, phone, pickup_points))
         conn.commit()
         conn.close()
 
         return redirect(url_for('big_list'))
 
-    return render_template('add_big.html')
-
+    return render_template('add_big.html', districts=districts, locations=locations)
 # ========== Список ВЕЛИКИХ округів ==========
 @app.route('/big_list')
 def big_list():
