@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Редагування великого округу</title>
+</head>
+<body>
+    <h2>Редагувати анкету</h2>
+    <form method="POST">
+        <label>Округ:</label><br>
+        <select name="district_number" required>
+            {% for d in districts %}
+                <option value="{{ d }}" {% if d == big[1] %}selected{% endif %}>{{ d }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Прізвище:</label><br>
+        <input type="text" name="last_name" value="{{ big[2] }}" required><br><br>
+
+        <label>Імʼя:</label><br>
+        <input type="text" name="first_name" value="{{ big[3] }}" required><br><br>
+
+        <label>По батькові:</label><br>
+        <input type="text" name="middle_name" value="{{ big[4] }}" required><br><br>
+
+        <label>Телефон:</label><br>
+        <input type="text" name="phone" value="{{ big[5] }}" required><br><br>
+
+        <label>Локація (можна обрати кілька):</label><br>
+        <select name="pickup_points" multiple required>
+            {% for loc in locations %}
+                <option value="{{ loc }}" {% if loc in selected_locations %}selected{% endif %}>{{ loc }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <button type="submit">Зберегти зміни</button>
+        <a href="{{ url_for('big_list') }}">← Назад</a>
+    </form>
+</body>
+</html>
