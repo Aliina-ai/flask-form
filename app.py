@@ -1,9 +1,27 @@
+import sqlite3 
 import os
 from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'  # заміни на свій секретний ключ
+
+def init_db():
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS big_districts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            district_number TEXT NOT NULL,
+            last_name TEXT,
+            first_name TEXT,
+            middle_name TEXT,
+            phone TEXT,
+            pickup_points TEXT
+        )
+    ''')
+    conn.commit()
+    conn.close()
 
 # ========== Користувачі ==========
 users = {
@@ -99,4 +117,5 @@ def subscriber_list():
 
 # ========== Запуск ==========
 if __name__ == '__main__':
+    init_db() # ⬅️ Перший запуск створює базу
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 10000)))
