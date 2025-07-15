@@ -1,13 +1,5 @@
-return "Доступ заборонено"
+return render_template('subscribers.html', subscribers=subscribers)
 
-    with sqlite3.connect(DB_NAME) as conn:
-        c = conn.cursor()
-        c.execute("SELECT * FROM subscribers")
-        subscribers = c.fetchall()
-
-    return render_template('subscribers.html', subscribers=subscribers)
-
-# Додати великий округ
 @app.route('/add_big', methods=['GET', 'POST'])
 def add_big():
     if 'username' not in session:
@@ -35,7 +27,6 @@ def add_big():
 
     return render_template('add_big.html')
 
-# Перегляд великих округів
 @app.route('/big_list')
 def big_list():
     if 'username' not in session:
@@ -48,7 +39,6 @@ def big_list():
 
     return render_template('big_list.html', districts=districts)
 
-# Запуск додатку
-if __name__ == '__main__':
+if name == '__main__':
     init_db()
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 10000)), debug=True)
