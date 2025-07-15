@@ -104,6 +104,12 @@
                 <td>{{ big[4] }}</td>
                 <td>{{ big[5] }}</td>
                 <td>{{ big[6] }}</td>
+                <td>
+                    <a href="{{ url_for('edit_big', id=big[0]) }}">✏️</a>
+                    <form action="{{ url_for('delete_big', id=big[0]) }}" method="POST" style="display:inline;">
+                        <button type="submit" onclick="return confirm('Видалити анкету?')" style="border:none; background:none; color:red;">🗑️</button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </table>
