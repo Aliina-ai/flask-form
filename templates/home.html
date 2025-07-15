@@ -98,15 +98,12 @@
         </form>
     </div>
 
-    <div class="container">
-        <h2>Оберіть тип анкети</h2>
-        <div class="menu-buttons">
-            <a href="{{ url_for('big_list') }}"><button>Великі округи</button></a>
-            <a href="{{ url_for('small_list') }}"><button>Малі округи</button></a>
-            <a href="{{ url_for('elder_list') }}"><button>Старші</button></a>
-            <a href="{{ url_for('subscriber_list') }}"><button>Підписники</button></a>
-        </div>
-    </div>
+<div class="menu-buttons">
+    <a href="{{ url_for('big_list') }}"><button>Великі округи</button></a>
+    <a href="{{ url_for('small_list') }}"><button>Малі округи</button></a>
+    <a href="{{ url_for('elder_list') }}"><button>Старші</button></a>
+    <a href="{{ url_for('subscriber_list') }}"><button>Підписники</button></a>
+</div>
 
 </body>
 </html>
