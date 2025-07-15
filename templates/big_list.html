@@ -7,106 +7,83 @@
         body {
             font-family: "Segoe UI", sans-serif;
             background-color: #f4f6f9;
-            color: #2c2c2c;
             margin: 0;
             padding: 0;
         }
 
-        .navbar {
+        .header {
             background-color: #2d6ca2;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .navbar h1 {
             color: white;
-            font-size: 22px;
-            margin: 0;
-        }
-
-        .logout-btn {
-            background-color: #ffffff;
-            color: #2d6ca2;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 4px;
-            font-weight: 500;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .logout-btn:hover {
-            background-color: #e6e6e6;
+            padding: 20px;
+            text-align: center;
         }
 
         .container {
-            max-width: 1000px;
-            margin: 50px auto;
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
             padding: 30px;
-            background-color: white;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.05);
         }
 
         h2 {
-            text-align: center;
-            margin-bottom: 30px;
             color: #2d6ca2;
+            text-align: center;
+            margin-bottom: 20px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 15px;
+            margin-bottom: 30px;
         }
 
         th, td {
-            border: 1px solid #ccc;
-            padding: 12px;
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
             text-align: left;
         }
 
         th {
-            background-color: #e6e6e6;
-            font-weight: 600;
+            background-color: #f0f0f0;
         }
 
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
+        .btn-container {
+            text-align: right;
         }
 
-        .back-link {
-            display: inline-block;
-            margin-top: 25px;
-            text-decoration: none;
+        .btn-add {
             background-color: #2d6ca2;
             color: white;
             padding: 10px 20px;
-            border-radius: 5px;
+            text-decoration: none;
             font-weight: 500;
+            border-radius: 5px;
+            transition: background-color 0.2s ease;
         }
 
-        .back-link:hover {
+        .btn-add:hover {
             background-color: #204d74;
         }
+
+        .btn-back {
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 15px;
+            color: #2d6ca2;
+        }
+
     </style>
 </head>
 <body>
 
-    <div class="navbar">
-        <h1>Список великих округів</h1>
-        <form action="{{ url_for('logout') }}" method="post">
-            <button type="submit" class="logout-btn">🚪 Вийти</button>
-        </form>
+    <div class="header">
+        <h1>Великі округи</h1>
     </div>
 
     <div class="container">
-        <h2>Відповідальні за великі округи</h2>
+        <h2>Список відповідальних за великі округи</h2>
 
         <table>
             <tr>
@@ -117,19 +94,23 @@
                 <th>Телефон</th>
                 <th>Локації</th>
             </tr>
-            {% for row in bigs %}
+            {% for big in bigs %}
             <tr>
-                <td>{{ row[1] }}</td>
-                <td>{{ row[2] }}</td>
-                <td>{{ row[3] }}</td>
-                <td>{{ row[4] }}</td>
-                <td>{{ row[5] }}</td>
-                <td>{{ row[6] }}</td>
+                <td>{{ big[1] }}</td>
+                <td>{{ big[2] }}</td>
+                <td>{{ big[3] }}</td>
+                <td>{{ big[4] }}</td>
+                <td>{{ big[5] }}</td>
+                <td>{{ big[6] }}</td>
             </tr>
             {% endfor %}
         </table>
 
-        <a href="{{ url_for('home') }}" class="back-link">⬅️ Назад до меню</a>
+        <div class="btn-container">
+            <a href="{{ url_for('add_big') }}" class="btn-add">➕ Додати анкету</a>
+        </div>
+
+        <a href="{{ url_for('home') }}" class="btn-back">← Назад до меню</a>
     </div>
 
 </body>
