@@ -115,5 +115,5 @@ def subscriber_list():
 
 
 # ========== Запуск ==========
-if name == '__main__':
+if __name__ == '__main__':
     app.run(debug=True)
