@@ -61,11 +61,11 @@ def home():
 @app.route('/add_big', methods=['GET', 'POST'])
 def add_big():
     if 'user' not in session:
-        return redirect(url_for('login'))
+        return redirect(url_for('login'))  # <- дуже важливо, не прибирай!
 
-    # Випадаючі списки
-    districts = [str(i) for i in range(1, 7)]         # 1–6 округів
-    locations = [f'Л{i}' for i in range(1, 21)]       # Л1–Л20
+    # Списки для випадаючих полів
+    districts = [str(i) for i in range(1, 7)]
+    locations = [f'Л{i}' for i in range(1, 21)]
 
     if request.method == 'POST':
         district_number = request.form['district_number']
