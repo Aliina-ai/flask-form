@@ -112,11 +112,11 @@
             <label for="phone">Телефон</label>
             <input type="tel" name="phone" required>
 
-            <label for="pickup_points">Локації видачі</label>
-            <select name="pickup_points" multiple class="multi-select">
-                {% for l in locations %}
-                    <option value="{{ l }}">{{ l }}</option>
-                {% endfor %}
+            <label for="pickup_points">Локація (можна обрати кілька):</label><br>
+            <select name="pickup_points" id="pickup_points" multiple required>
+              {% for loc in locations %}
+                 <option value="{{ loc }}">{{ loc }}</option>
+              {% endfor %}
             </select>
 
             <div class="button-group">
