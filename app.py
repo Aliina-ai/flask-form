@@ -120,7 +120,7 @@ def show_subscribers():
         c = conn.cursor()
         c.execute("SELECT * FROM subscribers")
         subscribers = c.fetchall()
-return render_template('subscribers.html', subscribers=subscribers)
+    return render_template('subscribers.html', subscribers=subscribers)
 
 @app.route('/add_big', methods=['GET', 'POST'])
 def add_big():
