@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Додати великий округ</title>
+    <title>Великі округи</title>
     <style>
         body {
             font-family: "Segoe UI", sans-serif;
@@ -45,7 +45,7 @@
         }
 
         .container {
-            max-width: 700px;
+            max-width: 1000px;
             margin: 50px auto;
             padding: 30px;
             background-color: white;
@@ -59,47 +59,39 @@
             color: #2d6ca2;
         }
 
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        label {
-            font-weight: 500;
-            margin-bottom: 5px;
-        }
-
-        input[type="text"], input[type="number"] {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+        table {
+            width: 100%;
+            border-collapse: collapse;
             font-size: 15px;
         }
 
-        .checkbox-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+        th, td {
+            border: 1px solid #ccc;
+            padding: 12px;
+            text-align: left;
         }
 
-        .checkbox-group label {
-            font-weight: normal;
+        th {
+            background-color: #e6e6e6;
+            font-weight: 600;
         }
 
-        button[type="submit"] {
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            text-decoration: none;
             background-color: #2d6ca2;
             color: white;
-            padding: 12px;
-            font-size: 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-            margin-top: 10px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 500;
         }
 
-        button[type="submit"]:hover {
+        .back-link:hover {
             background-color: #204d74;
         }
     </style>
@@ -107,45 +99,37 @@
 <body>
 
     <div class="navbar">
-        <h1>Додати великий округ</h1>
+        <h1>Список великих округів</h1>
         <form action="{{ url_for('logout') }}" method="post">
             <button type="submit" class="logout-btn">🚪 Вийти</button>
         </form>
     </div>
 
     <div class="container">
-        <h2>Форма заповнення</h2>
-        <form method="post">
-            <div>
-                <label for="district_number">Номер округу</label>
-                <input type="number" name="district_number" required>
-            </div>
-            <div>
-                <label for="last_name">Прізвище</label>
-                <input type="text" name="last_name">
-            </div>
-            <div>
-                <label for="first_name">Ім'я</label>
-                <input type="text" name="first_name">
-            </div>
-            <div>
-                <label for="middle_name">По батькові</label>
-                <input type="text" name="middle_name">
-            </div>
-            <div>
-                <label for="phone">Телефон</label>
-                <input type="text" name="phone">
-            </div>
-            <div>
-                <label>Пункти видачі</label>
-                <div class="checkbox-group">
-                    <label><input type="checkbox" name="pickup_points" value="Укрпошта"> Укрпошта</label>
-                    <label><input type="checkbox" name="pickup_points" value="Нова Пошта"> Нова Пошта</label>
-                    <label><input type="checkbox" name="pickup_points" value="Доставка додому"> Доставка додому</label>
-                </div>
-            </div>
-            <button type="submit">Зберегти округ</button>
-        </form>
+        <h2>Відповідальні за великі округи</h2>
+
+        <table>
+            <tr>
+                <th>Округ</th>
+                <th>Прізвище</th>
+                <th>Імʼя</th>
+                <th>По батькові</th>
+                <th>Телефон</th>
+                <th>Локації</th>
+            </tr>
+            {% for row in bigs %}
+            <tr>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+                <td>{{ row[3] }}</td>
+                <td>{{ row[4] }}</td>
+                <td>{{ row[5] }}</td>
+                <td>{{ row[6] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <a href="{{ url_for('home') }}" class="back-link">⬅️ Назад до меню</a>
     </div>
 
 </body>
