@@ -2,16 +2,15 @@ from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # заміни на свій ключ
+app.secret_key = 'your_secret_key_here'  # заміни на свій секретний ключ
 
 # ========== Користувачі ==========
 users = {
     'alina01': {'password': '0esz257C', 'role': 'admin'},
-    'natalia01': {'password': 'gY7zBv3p', 'role': 'operator'}  # згенерований пароль
+    'natalia01': {'password': 'gY7zBv3p', 'role': 'operator'}  # Згенерований пароль
 }
 
 # ========== Авторизація ==========
-
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -39,7 +38,6 @@ def home():
         return redirect(url_for('login'))
     return render_template('home.html')
 
-
 # ========== Додавання ВЕЛИКИХ округів ==========
 @app.route('/add_big', methods=['GET', 'POST'])
 def add_big():
@@ -65,7 +63,6 @@ def add_big():
 
     return render_template('add_big.html')
 
-
 # ========== Список ВЕЛИКИХ округів ==========
 @app.route('/big_list')
 def big_list():
@@ -80,49 +77,23 @@ def big_list():
 
     return render_template('big_list.html', bigs=bigs)
 
-
-# ========== Заготовки для інших анкет ==========
-
-@app.route('/add_small', methods=['GET', 'POST'])
-def add_small():
-    # додаватимемо пізніше
-    return "Форма додавання МАЛИХ округів (тимчасово)"
-
+# ========== Заглушки для решти ==========
 @app.route('/small_list')
 def small_list():
-    # додаватимемо пізніше
-    return "Список малих округів (тимчасово)"
-
-@app.route('/add_elder', methods=['GET', 'POST'])
-def add_elder():
-    # додаватимемо пізніше
-    return "Форма додавання СТАРШИХ (тимчасово)"
-
-@app.route('/elder_list')
-def elder_list():
-    # додаватимемо пізніше
-    return "Список старших (тимчасово)"
-
-@app.route('/add_subscriber', methods=['GET', 'POST'])
-def add_subscriber():
-    # додаватимемо пізніше
-    return "Форма додавання ПІДПИСНИКІВ (тимчасово)"
-
-@app.route('/subscriber_list')
-def subscriber_list():
-    # додаватимемо пізніше
-    return "Список підписників (тимчасово)"
-
-@app.route('/small_list')
-def small_list():
+    if 'username' not in session:
+        return redirect(url_for('login'))
     return "Список малих округів (тимчасово)"
 
 @app.route('/elder_list')
 def elder_list():
+    if 'username' not in session:
+        return redirect(url_for('login'))
     return "Список старших (тимчасово)"
 
 @app.route('/subscriber_list')
 def subscriber_list():
+    if 'username' not in session:
+        return redirect(url_for('login'))
     return "Список підписників (тимчасово)"
 
 # ========== Запуск ==========
