@@ -5,57 +5,132 @@
     <title>Великі округи</title>
     <style>
         body {
-            font-family: Arial;
-            background: #f8fcff;
-            padding: 30px;
+            font-family: "Segoe UI", sans-serif;
+            background-color: #f4f6f9;
+            color: #2c2c2c;
+            margin: 0;
+            padding: 0;
         }
+
+        .navbar {
+            background-color: #2d6ca2;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h1 {
+            color: white;
+            font-size: 22px;
+            margin: 0;
+        }
+
+        .logout-btn {
+            background-color: #ffffff;
+            color: #2d6ca2;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .logout-btn:hover {
+            background-color: #e6e6e6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2d6ca2;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
+            font-size: 15px;
         }
+
         th, td {
+            border: 1px solid #ccc;
             padding: 12px;
-            border-bottom: 1px solid #ddd;
             text-align: left;
         }
+
         th {
-            background: #3399ff;
+            background-color: #e6e6e6;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            text-decoration: none;
+            background-color: #2d6ca2;
             color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 500;
         }
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        a {
-            display: block;
-            text-align: center;
-            margin: 15px;
-            color: #3399ff;
+
+        .back-link:hover {
+            background-color: #204d74;
         }
     </style>
 </head>
 <body>
-    <h2>Список великих округів</h2>
-    <table>
-        <tr>
-            <th>Округ</th>
-            <th>ПІБ</th>
-            <th>Телефон</th>
-            <th>Точки видачі</th>
-        </tr>
-        {% for d in districts %}
-        <tr>
-            <td>{{ d[1] }}</td>
-            <td>{{ d[2] }} {{ d[3] }} {{ d[4] }}</td>
-            <td>{{ d[5] }}</td>
-            <td>{{ d[6] }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-    <a href="/add_big">➕ Додати округ</a>
-    <a href="/add">🔙 Назад</a>
+
+    <div class="navbar">
+        <h1>Список великих округів</h1>
+        <form action="{{ url_for('logout') }}" method="post">
+            <button type="submit" class="logout-btn">🚪 Вийти</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <h2>Відповідальні за великі округи</h2>
+
+        <table>
+            <tr>
+                <th>Округ</th>
+                <th>Прізвище</th>
+                <th>Імʼя</th>
+                <th>По батькові</th>
+                <th>Телефон</th>
+                <th>Локації</th>
+            </tr>
+            {% for row in bigs %}
+            <tr>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+                <td>{{ row[3] }}</td>
+                <td>{{ row[4] }}</td>
+                <td>{{ row[5] }}</td>
+                <td>{{ row[6] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <a href="{{ url_for('home') }}" class="back-link">⬅️ Назад до меню</a>
+    </div>
+
 </body>
 </html>
