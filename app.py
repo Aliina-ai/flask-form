@@ -1,11 +1,11 @@
-import sqlite3 
+import sqlite3
 import os
 from flask import Flask, render_template, request, redirect, url_for, session
-import sqlite3
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'  # заміни на свій секретний ключ
 
+# ========== Ініціалізація бази ==========
 def init_db():
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
@@ -36,7 +36,6 @@ def login():
         login = request.form['login']
         password = request.form['password']
         user = users.get(login)
-
         if user and user['password'] == password:
             session['username'] = login
             session['role'] = user['role']
@@ -68,8 +67,37 @@ def big_list():
     c.execute('SELECT * FROM big_districts')
     bigs = c.fetchall()
     conn.close()
-
     return render_template('big_list.html', bigs=bigs)
+
+# ========== Додавання анкети великого округу ==========
+@app.route('/add_big', methods=['GET', 'POST'])
+def add_big():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    districts = [str(i) for i in range(1, 7)]
+    locations = [f'Л{i}' for i in range(1, 21)]
+
+    if request.method == 'POST':
+        district_number = request.form['district_number']
+        last_name = request.form['last_name']
+        first_name = request.form['first_name']
+        middle_name = request.form['middle_name']
+        phone = request.form['phone']
+        pickup_points = ', '.join(request.form.getlist('pickup_points'))
+
+        conn = sqlite3.connect('database.db')
+        c = conn.cursor()
+        c.execute('''
+            INSERT INTO big_districts 
+            (district_number, last_name, first_name, middle_name, phone, pickup_points)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (district_number, last_name, first_name, middle_name, phone, pickup_points))
+        conn.commit()
+        conn.close()
+        return redirect(url_for('big_list'))
+
+    return render_template('add_big.html', districts=districts, locations=locations)
 
 # ========== Заглушки для решти ==========
 @app.route('/small_list')
@@ -91,6 +119,7 @@ def subscriber_list():
     return "Список підписників (тимчасово)"
 
 # ========== Запуск ==========
-if __name__ == '__main__':
-    init_db() # ⬅️ Перший запуск створює базу
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 10000)))
+if name == '__main__':
+    init_db()  # ⬅️ Перший запуск створює базу
+    port = int(os.environ.get('PORT', 10000))
+    app.run(host='0.0.0.0', port=port)
