@@ -42,6 +42,32 @@ def init_db():
     conn.commit()
     conn.close()
 
+# Малі округи
+
+def init_db():
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS elders (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            big_district TEXT,
+            district_number TEXT,
+            location TEXT,
+            last_name TEXT,
+            first_name TEXT,
+            middle_name TEXT,
+            address TEXT,
+            phone TEXT,
+            birth_date TEXT,
+            subscribers INTEGER,
+            newspapers INTEGER
+        )
+    ''')
+
+    conn.commit()
+    conn.close()
+
 # ========== Користувачі ==========
 users = {
     'alina01': {'password': '0esz257C', 'role': 'admin'},
