@@ -234,6 +234,79 @@ def add_small():
         locations=locations
     )
 
+# ========== Редагування анкети малого округу ==========
+@app.route('/edit_small/<int:id>', methods=['GET', 'POST'])
+def edit_small(id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    locations = [f"Л{i}" for i in range(1, 21)]
+    local_numbers = [str(i) for i in range(1, 43)]
+
+    def get_big_district(number):
+        n = int(number)
+        if 1 <= n <= 7:
+            return "1"
+        elif 8 <= n <= 14:
+            return "2"
+        elif 15 <= n <= 19:
+            return "3"
+        elif 20 <= n <= 28:
+            return "4"
+        elif 29 <= n <= 35:
+            return "5"
+        elif 36 <= n <= 42:
+            return "6"
+        return "Невідомо"
+
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+
+    if request.method == 'POST':
+        local_number = request.form['local_number']
+        last_name = request.form['last_name']
+        first_name = request.form['first_name']
+        middle_name = request.form['middle_name']
+        address = request.form['address']
+        phone = request.form['phone']
+        birth_date = request.form['birth_date']
+        location = request.form['location']
+        big_district = get_big_district(local_number)
+
+        c.execute('''
+            UPDATE small_districts SET 
+                big_district = ?, local_number = ?, last_name = ?, 
+                first_name = ?, middle_name = ?, address = ?, 
+                phone = ?, birth_date = ?, location = ? 
+            WHERE id = ?
+        ''', (big_district, local_number, last_name, first_name, middle_name,
+              address, phone, birth_date, location, id))
+
+        conn.commit()
+        conn.close()
+        return redirect(url_for('small_list'))
+
+    c.execute('SELECT * FROM small_districts WHERE id = ?', (id,))
+    small = c.fetchone()
+    conn.close()
+
+    return render_template('edit_small.html', small=small, locations=locations, local_numbers=local_numbers)
+
+# ========== Видалення  анкети малого округа ==========
+
+@app.route('/delete_small/<int:id>', methods=['POST'])
+def delete_small(id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    c.execute('DELETE FROM small_districts WHERE id = ?', (id,))
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('small_list'))
+
 # ========== Заглушки для решти ==========
 @app.route('/elder_list')
 def elder_list():
