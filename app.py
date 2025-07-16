@@ -27,6 +27,7 @@ def init_db():
     c.execute('''
         CREATE TABLE IF NOT EXISTS small_districts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            big_district TEXT
             local_number TEXT NOT NULL,
             last_name TEXT,
             first_name TEXT,
