@@ -10,7 +10,7 @@ def init_db():
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
 
-    # Таблиця великих округів
+    # Великі округи
     c.execute('''
         CREATE TABLE IF NOT EXISTS big_districts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -23,11 +23,11 @@ def init_db():
         )
     ''')
 
-    # Таблиця малих округів
+    # Малі округи (Великий округ перший!)
     c.execute('''
         CREATE TABLE IF NOT EXISTS small_districts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            big_district TEXT
+            big_district TEXT,
             local_number TEXT NOT NULL,
             last_name TEXT,
             first_name TEXT,
@@ -35,8 +35,7 @@ def init_db():
             address TEXT,
             phone TEXT,
             birth_date TEXT,
-            location TEXT,
-            big_district TEXT
+            location TEXT
         )
     ''')
 
