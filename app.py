@@ -380,6 +380,50 @@ def add_elder():
 
 # ========== Редагувати Старших ==========
 
+@app.route('/edit_elder/<int:elder_id>', methods=['GET', 'POST'])
+def edit_elder(elder_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+
+    if request.method == 'POST':
+        small_district = request.form.get('small_district') or ''
+        big_district = request.form.get('big_district') or ''
+        location = request.form.get('location') or ''
+        last_name = request.form.get('last_name') or ''
+        first_name = request.form.get('first_name') or ''
+        middle_name = request.form.get('middle_name') or ''
+        phone = request.form.get('phone') or ''
+        address = request.form.get('address') or ''
+        birthdate = request.form.get('birthdate') or ''
+        subscriber_count = request.form.get('subscriber_count') or '0'
+        newspaper_count = request.form.get('newspaper_count') or '0'
+
+        c.execute('''
+            UPDATE elders SET
+                big_district = ?, small_district = ?, location = ?,
+                last_name = ?, first_name = ?, middle_name = ?,
+                phone = ?, address = ?, birthdate = ?,
+                subscriber_count = ?, newspaper_count = ?
+            WHERE id = ?
+        ''', (
+            big_district, small_district, location,
+            last_name, first_name, middle_name,
+            phone, address, birthdate,
+            subscriber_count, newspaper_count,
+            elder_id
+        ))
+        conn.commit()
+        conn.close()
+        return redirect(url_for('elder_list'))
+
+    c.execute('SELECT * FROM elders WHERE id = ?', (elder_id,))
+    elder = c.fetchone()
+    conn.close()
+    return render_template('edit_elder.html', elder=elder)
+
 # ========== Видаляти Старших ==========
 @app.route('/delete_elder/<int:id>', methods=['POST'])
 def delete_elder(id):
