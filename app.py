@@ -342,33 +342,40 @@ def elder_list():
 def add_elder():
     if 'username' not in session:
         return redirect(url_for('login'))
+
     if request.method == 'POST':
-        big_district = request.form['big_district']
-        small_district = request.form['small_district']
-        location = request.form['location']
-        last_name = request.form['last_name']
-        first_name = request.form['first_name']
-        middle_name = request.form['middle_name']
-        phone = request.form['phone']
-        address = request.form['address']
-        birthdate = request.form['birthdate']
-        subscriber_count = request.form['subscriber_count']
-        newspaper_count = request.form['newspaper_count']
-        
+        small_district = request.form.get('small_district') or ''
+        big_district = request.form.get('big_district') or ''
+        location = request.form.get('location') or ''
+        last_name = request.form.get('last_name') or ''
+        first_name = request.form.get('first_name') or ''
+        middle_name = request.form.get('middle_name') or ''
+        phone = request.form.get('phone') or ''
+        address = request.form.get('address') or ''
+        birthdate = request.form.get('birthdate') or ''
+        subscriber_count = request.form.get('subscriber_count') or '0'
+        newspaper_count = request.form.get('newspaper_count') or '0'
+
         conn = sqlite3.connect('database.db')
         c = conn.cursor()
         c.execute('''
             INSERT INTO elders (
-                big_district, small_district, location, last_name, first_name, middle_name,
-                phone, address, birthdate, subscriber_count, newspaper_count
+                big_district, small_district, location,
+                last_name, first_name, middle_name,
+                phone, address, birthdate,
+                subscriber_count, newspaper_count
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
-            big_district, small_district, location, last_name, first_name, middle_name,
-            phone, address, birthdate, subscriber_count, newspaper_count
+            big_district, small_district, location,
+            last_name, first_name, middle_name,
+            phone, address, birthdate,
+            subscriber_count, newspaper_count
         ))
         conn.commit()
         conn.close()
+
         return redirect(url_for('elder_list'))
+
     return render_template('add_elder.html')
 
 # ========== Редагувати Старших ==========
