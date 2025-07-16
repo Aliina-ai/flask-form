@@ -13,7 +13,7 @@
         h2 {
             text-align: center;
             color: #2c3e50;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
         .top-buttons {
             display: flex;
@@ -32,6 +32,17 @@
         }
         .btn:hover {
             background-color: #1e4e79;
+        }
+        .search-box {
+            text-align: right;
+            margin-bottom: 10px;
+        }
+        .search-box input {
+            padding: 8px 12px;
+            font-size: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            width: 300px;
         }
         table {
             width: 100%;
@@ -62,6 +73,18 @@
             font-size: 16px;
         }
     </style>
+    <script>
+        function searchTable() {
+            const input = document.getElementById("searchInput");
+            const filter = input.value.toLowerCase();
+            const rows = document.querySelectorAll("table tbody tr");
+
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(filter) ? "" : "none";
+            });
+        }
+    </script>
 </head>
 <body>
 
@@ -70,6 +93,10 @@
 <div class="top-buttons">
     <a href="{{ url_for('home') }}" class="btn">← Назад до меню</a>
     <a href="{{ url_for('add_elder') }}" class="btn">➕ Додати анкету</a>
+</div>
+
+<div class="search-box">
+    <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Пошук у таблиці...">
 </div>
 
 <table>
