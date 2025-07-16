@@ -189,6 +189,22 @@ def add_small():
     local_numbers = [str(i) for i in range(1, 43)]
     locations = [f"Л{i}" for i in range(1, 21)]
 
+    def get_big_district(number):
+        n = int(number)
+        if 1 <= n <= 7:
+            return "1"
+        elif 8 <= n <= 14:
+            return "2"
+        elif 15 <= n <= 19:
+            return "3"
+        elif 20 <= n <= 28:
+            return "4"
+        elif 29 <= n <= 35:
+            return "5"
+        elif 36 <= n <= 42:
+            return "6"
+        return "Невідомо"
+
     if request.method == 'POST':
         local_number = request.form['local_number']
         last_name = request.form['last_name']
@@ -198,15 +214,15 @@ def add_small():
         phone = request.form['phone']
         birth_date = request.form['birth_date']
         location = request.form['location']
-        big_district = request.form['big_district']
+        big_district = get_big_district(local_number)
 
         conn = sqlite3.connect('database.db')
         c = conn.cursor()
         c.execute('''
             INSERT INTO small_districts 
-            (local_number, last_name, first_name, middle_name, address, phone, birth_date, location, big_district)
+            (big_district, local_number, last_name, first_name, middle_name, address, phone, birth_date, location)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (local_number, last_name, first_name, middle_name, address, phone, birth_date, location, big_district))
+        ''', (big_district, local_number, last_name, first_name, middle_name, address, phone, birth_date, location))
         conn.commit()
         conn.close()
 
