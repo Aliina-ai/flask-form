@@ -179,6 +179,44 @@ def small_list():
 
     return render_template('small_list.html', smalls=smalls)
 
+# ========== Додавання анкети малого округу ==========
+@app.route('/add_small', methods=['GET', 'POST'])
+def add_small():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    local_numbers = [str(i) for i in range(1, 43)]
+    locations = [f"Л{i}" for i in range(1, 21)]
+
+    if request.method == 'POST':
+        local_number = request.form['local_number']
+        last_name = request.form['last_name']
+        first_name = request.form['first_name']
+        middle_name = request.form['middle_name']
+        address = request.form['address']
+        phone = request.form['phone']
+        birth_date = request.form['birth_date']
+        location = request.form['location']
+        big_district = request.form['big_district']
+
+        conn = sqlite3.connect('database.db')
+        c = conn.cursor()
+        c.execute('''
+            INSERT INTO small_districts 
+            (local_number, last_name, first_name, middle_name, address, phone, birth_date, location, big_district)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (local_number, last_name, first_name, middle_name, address, phone, birth_date, location, big_district))
+        conn.commit()
+        conn.close()
+
+        return redirect(url_for('small_list'))
+
+    return render_template(
+        'add_small.html',
+        local_numbers=local_numbers,
+        locations=locations
+    )
+
 # ========== Заглушки для решти ==========
 @app.route('/elder_list')
 def elder_list():
