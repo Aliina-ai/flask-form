@@ -39,21 +39,21 @@ def init_db():
         )
     ''')
 
-   # Старші
+    # Старші
     c.execute('''
         CREATE TABLE IF NOT EXISTS elders (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             big_district TEXT,
-            district_number TEXT,
+            small_district TEXT,
             location TEXT,
             last_name TEXT,
             first_name TEXT,
             middle_name TEXT,
-            address TEXT,
             phone TEXT,
-            birth_date TEXT,
-            subscribers INTEGER,
-            newspapers INTEGER
+            address TEXT,
+            birthdate TEXT,
+            subscriber_count INTEGER,
+            newspaper_count INTEGER
         )
     ''')
 
@@ -326,34 +326,103 @@ def delete_small(id):
     return redirect(url_for('small_list'))
 
 # ========== Список Старших ==========
-
 @app.route('/elder_list')
 def elder_list():
     if 'username' not in session:
         return redirect(url_for('login'))
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    c.execute('SELECT * FROM elders')
+    elders = c.fetchall()
+    conn.close()
+    return render_template('elder_list.html', elders=elders)
 
-    query = request.args.get('q', '').lower()
-    
+# ========== Додавати Старших ==========
+@app.route('/add_elder', methods=['GET', 'POST'])
+def add_elder():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    if request.method == 'POST':
+        big_district = request.form['big_district']
+        small_district = request.form['small_district']
+        location = request.form['location']
+        last_name = request.form['last_name']
+        first_name = request.form['first_name']
+        middle_name = request.form['middle_name']
+        phone = request.form['phone']
+        address = request.form['address']
+        birthdate = request.form['birthdate']
+        subscriber_count = request.form['subscriber_count']
+        newspaper_count = request.form['newspaper_count']
+        
+        conn = sqlite3.connect('database.db')
+        c = conn.cursor()
+        c.execute('''
+            INSERT INTO elders (
+                big_district, small_district, location, last_name, first_name, middle_name,
+                phone, address, birthdate, subscriber_count, newspaper_count
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            big_district, small_district, location, last_name, first_name, middle_name,
+            phone, address, birthdate, subscriber_count, newspaper_count
+        ))
+        conn.commit()
+        conn.close()
+        return redirect(url_for('elder_list'))
+    return render_template('add_elder.html')
+
+# ========== Редагувати Старших ==========
+
+@app.route('/edit_elder/<int:id>', methods=['GET', 'POST'])
+def edit_elder(id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
 
-    if query:
+    if request.method == 'POST':
+        big_district = request.form['big_district']
+        small_district = request.form['small_district']
+        location = request.form['location']
+        last_name = request.form['last_name']
+        first_name = request.form['first_name']
+        middle_name = request.form['middle_name']
+        phone = request.form['phone']
+        address = request.form['address']
+        birthdate = request.form['birthdate']
+        subscriber_count = request.form['subscriber_count']
+        newspaper_count = request.form['newspaper_count']
+        
         c.execute('''
-            SELECT * FROM elders 
-            WHERE 
-                LOWER(last_name) LIKE ? OR 
-                LOWER(first_name) LIKE ? OR 
-                LOWER(middle_name) LIKE ? OR 
-                CAST(district_number AS TEXT) LIKE ? OR 
-                LOWER(location) LIKE ?
-        ''', (f'%{query}%', f'%{query}%', f'%{query}%', f'%{query}%', f'%{query}%'))
-    else:
-        c.execute('SELECT * FROM elders')
+            UPDATE elders SET
+                big_district=?, small_district=?, location=?, last_name=?, first_name=?, middle_name=?,
+                phone=?, address=?, birthdate=?, subscriber_count=?, newspaper_count=?
+            WHERE id=?
+        ''', (
+            big_district, small_district, location, last_name, first_name, middle_name,
+            phone, address, birthdate, subscriber_count, newspaper_count, id
+        ))
+        conn.commit()
+        conn.close()
+        return redirect(url_for('elder_list'))
 
-    elders = c.fetchall()
+    c.execute('SELECT * FROM elders WHERE id=?', (id,))
+    elder = c.fetchone()
     conn.close()
+    return render_template('edit_elder.html', elder=elder)
 
-    return render_template('elder_list.html', elders=elders)
+# ========== Видаляти Старших ==========
+@app.route('/delete_elder/<int:id>', methods=['POST'])
+def delete_elder(id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    c.execute('DELETE FROM elders WHERE id=?', (id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('elder_list'))
+
 # ========== Заглушки для решти ==========
 
 @app.route('/subscriber_list')
