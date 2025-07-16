@@ -33,6 +33,7 @@ def init_db():
             middle_name TEXT,
             address TEXT,
             phone TEXT,
+            birth_date TEXT,
             location TEXT,
             big_district TEXT
         )
