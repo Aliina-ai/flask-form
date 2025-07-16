@@ -1,126 +1,49 @@
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <title>Додати малий округ</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #f4f6f9;
-            color: #333;
-            max-width: 600px;
-            margin: 40px auto;
-            padding: 30px;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-        }
+@app.route('/add_small', methods=['GET', 'POST'])
+def add_small():
+    if 'username' not in session:
+        return redirect(url_for('login'))
 
-        h2 {
-            text-align: center;
-            margin-bottom: 25px;
-            color: #2c3e50;
-        }
+    local_numbers = [str(i) for i in range(1, 43)]  # округи 1–42
+    locations = [f"Л{i}" for i in range(1, 21)]     # локації Л1–Л20
 
-        label {
-            display: block;
-            margin-top: 15px;
-            font-weight: bold;
-        }
+    def get_big_district(num):
+        num = int(num)
+        if 1 <= num <= 7:
+            return "1"
+        elif 8 <= num <= 14:
+            return "2"
+        elif 15 <= num <= 19:
+            return "3"
+        elif 20 <= num <= 28:
+            return "4"
+        elif 29 <= num <= 35:
+            return "5"
+        elif 36 <= num <= 42:
+            return "6"
+        else:
+            return ""
 
-        input[type="text"],
-        input[type="date"],
-        select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 15px;
-        }
+    if request.method == 'POST':
+        local_number = request.form['local_number']
+        last_name = request.form['last_name']
+        first_name = request.form['first_name']
+        middle_name = request.form['middle_name']
+        address = request.form['address']
+        phone = request.form['phone']
+        birthdate = request.form['birthdate']
+        location = request.form['location']
+        big_district = get_big_district(local_number)
 
-        button {
-            background-color: #2e86de;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            margin-top: 20px;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-        }
+        conn = sqlite3.connect('database.db')
+        c = conn.cursor()
+        c.execute('''
+            INSERT INTO small_districts 
+            (local_number, last_name, first_name, middle_name, address, phone, birthdate, location, big_district)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (local_number, last_name, first_name, middle_name, address, phone, birthdate, location, big_district))
+        conn.commit()
+        conn.close()
 
-        button:hover {
-            background-color: #1b4f72;
-        }
+        return redirect(url_for('small_list'))
 
-        .back-link {
-            display: inline-block;
-            margin-top: 20px;
-            text-decoration: none;
-            font-weight: bold;
-            color: #2e86de;
-        }
-    </style>
-    <script>
-        function updateBigDistrict() {
-            const local = parseInt(document.getElementById('local_number').value);
-            let big = '';
-            if (local >= 1 && local <= 7) big = '1';
-            else if (local >= 8 && local <= 14) big = '2';
-            else if (local >= 15 && local <= 19) big = '3';
-            else if (local >= 20 && local <= 28) big = '4';
-            else if (local >= 29 && local <= 35) big = '5';
-            else if (local >= 36 && local <= 42) big = '6';
-            document.getElementById('big_district').value = big;
-        }
-    </script>
-</head>
-<body>
-
-<h2>Додати анкету (малий округ)</h2>
-
-<form method="POST">
-
-    <label for="local_number">Округ:</label>
-    <select name="local_number" id="local_number" onchange="updateBigDistrict()" required>
-        {% for n in local_numbers %}
-        <option value="{{ n }}">{{ n }}</option>
-        {% endfor %}
-    </select>
-
-    <label for="last_name">Прізвище:</label>
-    <input type="text" name="last_name" required>
-
-    <label for="first_name">Імʼя:</label>
-    <input type="text" name="first_name" required>
-
-    <label for="middle_name">По батькові:</label>
-    <input type="text" name="middle_name" required>
-
-    <label for="address">Адреса:</label>
-    <input type="text" name="address" required>
-
-    <label for="phone">Телефон:</label>
-    <input type="text" name="phone" required>
-
-    <label for="birth_date">Дата народження:</label>
-    <input type="date" name="birth_date" required>
-
-    <label for="location">Локація:</label>
-    <select name="location" required>
-        {% for loc in locations %}
-        <option value="{{ loc }}">{{ loc }}</option>
-        {% endfor %}
-    </select>
-
-    <label for="big_district">Великий округ:</label>
-    <input type="text" id="big_district" name="big_district" readonly required>
-
-    <button type="submit">💾 Додати анкету</button><br>
-    <a href="{{ url_for('small_list') }}" class="back-link">← Назад до списку</a>
-
-</form>
-
-</body>
-</html>
+    return render_template('add_small.html', local_numbers=local_numbers, locations=locations)
