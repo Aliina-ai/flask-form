@@ -137,7 +137,7 @@
                 <td>{{ e[10] }}</td>
                 <td>{{ e[11] }}</td>
                 <td class="actions">
-                    <a href="{{ url_for('edit_elder', id=e[0]) }}">✏️</a>
+                    <a href="{{ url_for('edit_elder', elder_id=e[0]) }}">✏️</a>
                     <form action="{{ url_for('delete_elder', id=e[0]) }}" method="POST">
                         <button type="submit" onclick="return confirm('Видалити анкету?')">🗑</button>
                     </form>
