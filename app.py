@@ -325,7 +325,7 @@ def delete_small(id):
 
     return redirect(url_for('small_list'))
 
-# ========== Список МАЛИХ округів ==========
+# ========== Список Старших ==========
 
 @app.route('/elder_list')
 def elder_list():
@@ -354,7 +354,6 @@ def elder_list():
     conn.close()
 
     return render_template('elder_list.html', elders=elders)
-
 # ========== Заглушки для решти ==========
 
 @app.route('/subscriber_list')
