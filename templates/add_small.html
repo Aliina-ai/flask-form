@@ -22,14 +22,14 @@
             border: 1px solid #ccc; border-radius: 6px; font-size: 15px;
         }
         button {
-            background-color: #2e86de; color: white; border: none;
+            background-color: #2d6ca2; color: white; border: none;
             padding: 10px 20px; margin-top: 20px;
             border-radius: 6px; font-size: 16px; cursor: pointer;
         }
         button:hover { background-color: #1b4f72; }
         .back-link {
             display: inline-block; margin-top: 20px;
-            text-decoration: none; font-weight: bold; color: #2e86de;
+            text-decoration: none; font-weight: bold; color: #2d6ca2;
         }
     </style>
 </head>
@@ -71,7 +71,7 @@
         {% endfor %}
     </select>
 
-    <button type="submit">💾 Додати анкету</button><br>
+    <button type="submit">💾 Зберегти анкету</button><br>
     <a href="{{ url_for('small_list') }}" class="back-link">← Назад до списку</a>
 
 </form>
