@@ -9,6 +9,8 @@ app.secret_key = 'your_secret_key_here'  # заміни на свій секре
 def init_db():
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
+
+    # Таблиця великих округів
     c.execute('''
         CREATE TABLE IF NOT EXISTS big_districts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,6 +22,22 @@ def init_db():
             pickup_points TEXT
         )
     ''')
+
+    # Таблиця малих округів
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS small_districts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            local_number TEXT NOT NULL,
+            last_name TEXT,
+            first_name TEXT,
+            middle_name TEXT,
+            address TEXT,
+            phone TEXT,
+            location TEXT,
+            big_district TEXT
+        )
+    ''')
+
     conn.commit()
     conn.close()
 
