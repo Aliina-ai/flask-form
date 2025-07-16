@@ -40,7 +40,7 @@ def init_db():
     ''')
 
    # Старші
-   c.execute('''
+    c.execute('''
         CREATE TABLE IF NOT EXISTS elders (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             big_district TEXT,
