@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Список малих округів</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            padding: 30px;
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        th {
+            background-color: #ecf0f1;
+            color: #333;
+        }
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            color: #2e86de;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Малі округи</h2>
+
+    <table>
+        <tr>
+            <th>Округ</th>
+            <th>Прізвище</th>
+            <th>Імʼя</th>
+            <th>По батькові</th>
+            <th>Адреса</th>
+            <th>Телефон</th>
+            <th>Локація</th>
+            <th>Великий округ</th>
+        </tr>
+        {% for s in smalls %}
+        <tr>
+            <td>{{ s[1] }}</td>
+            <td>{{ s[2] }}</td>
+            <td>{{ s[3] }}</td>
+            <td>{{ s[4] }}</td>
+            <td>{{ s[5] }}</td>
+            <td>{{ s[6] }}</td>
+            <td>{{ s[7] }}</td>
+            <td>{{ s[8] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <a href="{{ url_for('home') }}" class="back-link">← Назад до меню</a>
+
+</body>
+</html>
