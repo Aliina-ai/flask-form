@@ -307,12 +307,37 @@ def delete_small(id):
 
     return redirect(url_for('small_list'))
 
-# ========== Заглушки для решти ==========
+# ========== Список МАЛИХ округів ==========
+
 @app.route('/elder_list')
 def elder_list():
     if 'username' not in session:
         return redirect(url_for('login'))
-    return "Список старших (тимчасово)"
+
+    query = request.args.get('q', '').lower()
+    
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+
+    if query:
+        c.execute('''
+            SELECT * FROM elders 
+            WHERE 
+                LOWER(last_name) LIKE ? OR 
+                LOWER(first_name) LIKE ? OR 
+                LOWER(middle_name) LIKE ? OR 
+                CAST(district_number AS TEXT) LIKE ? OR 
+                LOWER(location) LIKE ?
+        ''', (f'%{query}%', f'%{query}%', f'%{query}%', f'%{query}%', f'%{query}%'))
+    else:
+        c.execute('SELECT * FROM elders')
+
+    elders = c.fetchall()
+    conn.close()
+
+    return render_template('elder_list.html', elders=elders)
+
+# ========== Заглушки для решти ==========
 
 @app.route('/subscriber_list')
 def subscriber_list():
