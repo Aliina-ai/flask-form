@@ -5,121 +5,93 @@
     <title>Великі округи</title>
     <style>
         body {
-            font-family: "Segoe UI", sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background-color: #f4f6f9;
-            margin: 0;
-            padding: 0;
-        }
-
-        .header {
-            background-color: #2d6ca2;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 40px auto;
-            background: white;
+            color: #333;
             padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.05);
         }
-
         h2 {
-            color: #2d6ca2;
             text-align: center;
-            margin-bottom: 20px;
+            color: #2c3e50;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 30px;
+            margin-top: 25px;
         }
-
         th, td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
         }
-
         th {
-            background-color: #f0f0f0;
+            background-color: #eaf0f6;
         }
-
-        .btn-container {
-            text-align: right;
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
         }
-
-        .btn-add {
+        .btn {
             background-color: #2d6ca2;
             color: white;
-            padding: 10px 20px;
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
             text-decoration: none;
-            font-weight: 500;
-            border-radius: 5px;
-            transition: background-color 0.2s ease;
+            font-size: 14px;
+            cursor: pointer;
         }
-
-        .btn-add:hover {
-            background-color: #204d74;
+        .btn:hover {
+            background-color: #1e4e79;
         }
-
-        .btn-back {
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 15px;
-            color: #2d6ca2;
+        .top-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
         }
-
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>Великі округи</h1>
-    </div>
+<h2>Анкети великих округів</h2>
 
-    <div class="container">
-        <h2>Список відповідальних за великі округи</h2>
+<div class="top-buttons">
+    <a href="{{ url_for('home') }}" class="btn">← Назад до меню</a>
+    <a href="{{ url_for('add_big') }}" class="btn">➕ Додати анкету</a>
+</div>
 
-        <table>
-            <tr>
-                <th>Округ</th>
-                <th>Прізвище</th>
-                <th>Імʼя</th>
-                <th>По батькові</th>
-                <th>Телефон</th>
-                <th>Локації</th>
-                <th>Дії</th>
-           </tr>
-            
-            {% for big in bigs %}
-            <tr>
-                <td>{{ big[1] }}</td>
-                <td>{{ big[2] }}</td>
-                <td>{{ big[3] }}</td>
-                <td>{{ big[4] }}</td>
-                <td>{{ big[5] }}</td>
-                <td>{{ big[6] }}</td>
-                <td>
-                    <a href="{{ url_for('edit_big', id=big[0]) }}">✏️</a>
-                    <form action="{{ url_for('delete_big', id=big[0]) }}" method="POST" style="display:inline;">
-                        <button type="submit" onclick="return confirm('Видалити анкету?')" style="border:none; background:none; color:red;">🗑️</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-
-        <div class="btn-container">
-            <a href="{{ url_for('add_big') }}" class="btn-add">➕ Додати анкету</a>
-        </div>
-
-        <a href="{{ url_for('home') }}" class="btn-back">← Назад до меню</a>
-    </div>
+<table>
+    <thead>
+        <tr>
+            <th>Округ</th>
+            <th>Прізвище</th>
+            <th>Імʼя</th>
+            <th>По батькові</th>
+            <th>Телефон</th>
+            <th>Локації</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for b in bigs %}
+        <tr>
+            <td>{{ b[1] }}</td>
+            <td>{{ b[2] }}</td>
+            <td>{{ b[3] }}</td>
+            <td>{{ b[4] }}</td>
+            <td>{{ b[5] }}</td>
+            <td>{{ b[6] }}</td>
+            <td class="actions">
+                <a href="{{ url_for('edit_big', id=b[0]) }}">✏️</a>
+                <form action="{{ url_for('delete_big', id=b[0]) }}" method="POST" style="display:inline;">
+                    <button type="submit" onclick="return confirm('Ви впевнені, що хочете видалити цю анкету?')">🗑</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 </body>
 </html>
