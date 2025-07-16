@@ -380,48 +380,58 @@ def add_elder():
 
 # ========== Редагувати Старших ==========
 
-@app.route('/edit_elder/<int:elder_id>', methods=['GET', 'POST']) 
-def edit_elder(elder_id): 
-    if 'username' not in session: 
-        return redirect(url_for('login')) 
+from flask import render_template, redirect, url_for, request, session, flash
+import sqlite3
 
-    conn = sqlite3.connect('database.db') 
-    conn.row_factory = sqlite3.Row  # ← Додаємо для доступу через імена колонок
-    c = conn.cursor() 
+@app.route('/edit_elder/<int:elder_id>', methods=['GET', 'POST'])
+def edit_elder(elder_id):
+    # Перевірка авторизації
+    if 'username' not in session:
+        return redirect(url_for('login'))
 
-    if request.method == 'POST': 
-        small_district = request.form.get('small_district') or '' 
-        big_district = request.form.get('big_district') or '' 
-        location = request.form.get('location') or '' 
-        last_name = request.form.get('last_name') or '' 
-        first_name = request.form.get('first_name') or '' 
-        middle_name = request.form.get('middle_name') or '' 
-        phone = request.form.get('phone') or '' 
-        address = request.form.get('address') or '' 
-        birthdate = request.form.get('birthdate') or '' 
-        subscriber_count = request.form.get('subscriber_count') or '0' 
-        newspaper_count = request.form.get('newspaper_count') or '0' 
+    # Підключення до бази
+    conn = sqlite3.connect('database.db')
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
 
-        c.execute(''' 
-            UPDATE elders SET 
-                big_district = ?, small_district = ?, location = ?, 
-                last_name = ?, first_name = ?, middle_name = ?, 
-                phone = ?, address = ?, birthdate = ?, 
-                subscriber_count = ?, newspaper_count = ? 
-            WHERE id = ? 
-        ''', ( 
-            big_district, small_district, location, 
-            last_name, first_name, middle_name, 
-            phone, address, birthdate, 
-            subscriber_count, newspaper_count, 
-            elder_id 
-        )) 
-        conn.commit() 
-        conn.close() 
-        return redirect(url_for('elder_list')) 
+    if request.method == 'POST':
+        # Збір даних з форми
+        big_district = request.form.get('big_district') or ''
+        small_district = request.form.get('small_district') or ''
+        location = request.form.get('location') or ''
+        last_name = request.form.get('last_name') or ''
+        first_name = request.form.get('first_name') or ''
+        middle_name = request.form.get('middle_name') or ''
+        phone = request.form.get('phone') or ''
+        address = request.form.get('address') or ''
+        birthdate = request.form.get('birthdate') or ''
+        subscriber_count = request.form.get('subscriber_count') or '0'
+        newspaper_count = request.form.get('newspaper_count') or '0'
 
-    c.execute('SELECT * FROM elders WHERE id = ?', (elder_id,)) 
-    elder = c.fetchone() 
+        # Оновлення даних
+        c.execute('''
+            UPDATE elders SET
+                big_district = ?, small_district = ?, location = ?,
+                last_name = ?, first_name = ?, middle_name = ?,
+                phone = ?, address = ?, birthdate = ?,
+                subscriber_count = ?, newspaper_count = ?
+            WHERE id = ?
+        ''', (
+            big_district, small_district, location,
+            last_name, first_name, middle_name,
+            phone, address, birthdate,
+            subscriber_count, newspaper_count,
+            elder_id
+        ))
+
+        conn.commit()
+        conn.close()
+        flash("Анкету оновлено успішно!", "success")
+        return redirect(url_for('elder_list'))
+
+    # GET-запит: отримати анкету
+    c.execute('SELECT * FROM elders WHERE id = ?', (elder_id,))
+    elder = c.fetchone()
     conn.close()
 
     if elder is None:
@@ -429,7 +439,7 @@ def edit_elder(elder_id):
         return redirect(url_for('elder_list'))
 
     return render_template('edit_elder.html', elder=elder)
-
+    
 # ========== Видаляти Старших ==========
 @app.route('/delete_elder/<int:id>', methods=['POST'])
 def delete_elder(id):
