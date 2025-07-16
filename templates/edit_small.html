@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Редагувати малий округ</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 30px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        .btn-blue {
+            background-color: #2d6ca2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 16px;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+        }
+        .btn-blue:hover {
+            background-color: #1e4e79;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Редагувати анкету (малий округ)</h2>
+
+<form method="POST">
+
+    <label>Округ (1–42):</label>
+    <select name="local_number" required>
+        {% for n in local_numbers %}
+            <option value="{{ n }}" {% if small[2] == n %}selected{% endif %}>{{ n }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Прізвище:</label>
+    <input type="text" name="last_name" value="{{ small[3] }}" required>
+
+    <label>Імʼя:</label>
+    <input type="text" name="first_name" value="{{ small[4] }}" required>
+
+    <label>По батькові:</label>
+    <input type="text" name="middle_name" value="{{ small[5] }}" required>
+
+    <label>Адреса:</label>
+    <input type="text" name="address" value="{{ small[6] }}" required>
+
+    <label>Телефон:</label>
+    <input type="text" name="phone" value="{{ small[7] }}" required>
+
+    <label>Дата народження:</label>
+    <input type="date" name="birth_date" value="{{ small[8] }}" required>
+
+    <label>Локація:</label>
+    <select name="location" required>
+        {% for loc in locations %}
+            <option value="{{ loc }}" {% if small[9] == loc %}selected{% endif %}>{{ loc }}</option>
+        {% endfor %}
+    </select>
+
+    <div class="btn-group">
+        <button type="submit" class="btn-blue">💾 Зберегти зміни</button>
+        <a href="{{ url_for('small_list') }}" class="btn-blue">← Назад до списку</a>
+    </div>
+
+</form>
+
+</body>
+</html>
