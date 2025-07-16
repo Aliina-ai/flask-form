@@ -39,16 +39,8 @@ def init_db():
         )
     ''')
 
-    conn.commit()
-    conn.close()
-
-# Малі округи
-
-def init_db():
-    conn = sqlite3.connect('database.db')
-    c = conn.cursor()
-
-    c.execute('''
+   # Старші
+   c.execute('''
         CREATE TABLE IF NOT EXISTS elders (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             big_district TEXT,
