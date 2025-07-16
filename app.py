@@ -165,13 +165,21 @@ def edit_big(id):
 
     return render_template('edit_big.html', big=big, districts=districts, locations=locations, selected_locations=selected_locations)
 
-# ========== Заглушки для решти ==========
+# ========== Список МАЛИХ округів ==========
 @app.route('/small_list')
 def small_list():
     if 'username' not in session:
         return redirect(url_for('login'))
-    return "Список малих округів (тимчасово)"
 
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    c.execute('SELECT * FROM small_districts')
+    smalls = c.fetchall()
+    conn.close()
+
+    return render_template('small_list.html', smalls=smalls)
+
+# ========== Заглушки для решти ==========
 @app.route('/elder_list')
 def elder_list():
     if 'username' not in session:
