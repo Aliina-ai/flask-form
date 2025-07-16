@@ -78,7 +78,7 @@
 
 <form method="POST">
     <label for="small_district">Малий округ</label>
-    <select name="small_district" id="small_district" required onchange="updateBigDistrict()">
+    <select name="small_district" id="small_district" onchange="updateBigDistrict()">
         <option value="">Оберіть...</option>
         {% for i in range(1, 43) %}
             <option value="{{ i }}">{{ i }}</option>
@@ -86,10 +86,10 @@
     </select>
 
     <label for="big_district">Великий округ (автоматично)</label>
-    <input type="text" name="big_district" id="big_district" readonly required>
+    <input type="text" name="big_district" id="big_district" readonly>
 
     <label for="location">Локація</label>
-    <select name="location" required>
+    <select name="location">
         <option value="">Оберіть...</option>
         {% for i in range(1, 21) %}
             <option value="Л{{ i }}">Л{{ i }}</option>
