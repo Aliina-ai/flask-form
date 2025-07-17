@@ -394,59 +394,6 @@ def add_elder():
 
     return render_template('add_elder.html')
 
-@app.route('/edit_elder/<int:elder_id>', methods=['GET', 'POST'])
-def edit_elder(elder_id):
-    elder = Elder.query.get_or_404(elder_id)
-
-    if request.method == 'POST':
-        elder.small_district = int(request.form['small_district'])
-        elder.location = request.form.get('location') or None
-        elder.last_name = request.form.get('last_name') or None
-        elder.first_name = request.form.get('first_name') or None
-        elder.middle_name = request.form.get('middle_name') or None
-        elder.phone = request.form.get('phone') or None
-        elder.address = request.form.get('address') or None
-        elder.birth_date = request.form.get('birth_date') or None
-        elder.subscribers = request.form.get('subscribers') or None
-        elder.newspapers = request.form.get('newspapers') or None
-
-        # Визначення великого округу
-        sd = elder.small_district
-        if 1 <= sd <= 7:
-            elder.big_district = 1
-        elif 8 <= sd <= 14:
-            elder.big_district = 2
-        elif 15 <= sd <= 19:
-            elder.big_district = 3
-        elif 20 <= sd <= 28:
-            elder.big_district = 4
-        elif 29 <= sd <= 35:
-            elder.big_district = 5
-        elif 36 <= sd <= 42:
-            elder.big_district = 6
-        else:
-            elder.big_district = None
-
-        db.session.commit()
-        return redirect(url_for('elder_list'))
-
-    return render_template('edit_elder.html', elder=elder)
-
-
-@app.route('/delete_elder/<int:id>', methods=['POST'])
-def delete_elder(id):
-    if 'username' not in session:
-        return redirect(url_for('login'))
-
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('DELETE FROM elders WHERE id = %s', (id,))
-    conn.commit()
-    cur.close()
-    conn.close()
-    return redirect(url_for('elder_list'))
-
-
 @app.route('/subscriber_list')
 def subscriber_list():
     if 'username' not in session:
