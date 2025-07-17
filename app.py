@@ -340,81 +340,10 @@ def delete_small(id):
 # ======= СТАРШІ =======
 @app.route('/elder_list')
 def elder_list():
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        cursor.execute("SELECT * FROM elders ORDER BY id DESC")
-        elders = cursor.fetchall()
-    except Exception as e:
-        print("Помилка при отриманні анкет старших:", e)
-        elders = []
-    finally:
-        if conn:
-            conn.close()
-    return render_template('elder_list.html', elders=elders)
-
-@app.route('/add_elder', methods=['GET', 'POST'])
-def add_elder():
-    if 'username' not in session:
+     if 'username' not in session:
         return redirect(url_for('login'))
+    return "Список підписників (тимчасово)"
 
-    if request.method == 'POST':
-        small_district = request.form.get('small_district') or ''
-        big_district = request.form.get('big_district') or ''
-        location = request.form.get('location') or ''
-        last_name = request.form.get('last_name') or ''
-        first_name = request.form.get('first_name') or ''
-        middle_name = request.form.get('middle_name') or ''
-        phone = request.form.get('phone') or ''
-        address = request.form.get('address') or ''
-        birthdate = request.form.get('birthdate') or ''
-        subscriber_count = request.form.get('subscriber_count') or 0
-        newspaper_count = request.form.get('newspaper_count') or 0
-
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute('''
-            INSERT INTO elders (
-                big_district, small_district, location,
-                last_name, first_name, middle_name,
-                phone, address, birthdate,
-                subscriber_count, newspaper_count
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        ''', (
-            big_district, small_district, location,
-            last_name, first_name, middle_name,
-            phone, address, birthdate,
-            subscriber_count, newspaper_count
-        ))
-        conn.commit()
-        cur.close()
-        conn.close()
-
-        return redirect(url_for('elder_list'))
-
-    return render_template('add_elder.html')
-
-@app.route('/edit_elder/<int:elder_id>', methods=['GET', 'POST'])
-def edit_elder(elder_id):
-    elder = Elder.query.get_or_404(elder_id)
-
-    if request.method == 'POST':
-        small_district = request.form.get('small_district') or ''
-        big_district = request.form.get('big_district') or ''
-        location = request.form.get('location') or ''
-        last_name = request.form.get('last_name') or ''
-        first_name = request.form.get('first_name') or ''
-        middle_name = request.form.get('middle_name') or ''
-        phone = request.form.get('phone') or ''
-        address = request.form.get('address') or ''
-        birthdate = request.form.get('birthdate') or ''
-        subscriber_count = request.form.get('subscriber_count') or 0
-        newspaper_count = request.form.get('newspaper_count') or 0
-
-        db.session.commit()
-        return redirect(url_for('elder_list'))
-
-    return render_template('edit_elder.html', elder=elder)
 
 @app.route('/subscriber_list')
 def subscriber_list():
