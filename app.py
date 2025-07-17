@@ -1,12 +1,15 @@
 import os
-import sqlite3
+import psycopg2
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', 'fallback_secret_key')  # секретний ключ із .env
+app.secret_key = os.getenv('SECRET_KEY', 'fallback_secret_key')
 
-# ======= Налаштування шляху до бази даних =======
-DATABASE = os.environ.get('DATABASE_PATH', 'database.db')
+DATABASE_URL = os.getenv('DATABASE_URL')
+
+def get_db_connection():
+    conn = psycopg2.connect(DATABASE_URL)
+    return conn
 
 # ======= Ініціалізація бази даних =======
 def init_db():
