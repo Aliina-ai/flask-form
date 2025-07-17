@@ -1,21 +1,18 @@
 import os
 import psycopg2
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY', 'fallback_secret_key')
+app.secret_key = os.getenv('SECRET_KEY', 'mysecretkey')
 
 DATABASE_URL = os.getenv('DATABASE_URL')
 
-def get_db_connection():
-    conn = psycopg2.connect(DATABASE_URL)
-    return conn
 
-# ======= Ініціалізація бази даних =======
-def init_db():
-    if not os.path.exists(DATABASE):
-        conn = sqlite3.connect(DATABASE)
-        c = conn.cursor()
+def get_db_connection():
+    return psycopg2.connect(DATABASE_URL)
 
         # Великі округи
         c.execute('''
