@@ -14,6 +14,10 @@ if not os.path.exists('database.db'):
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
 
+import os
+basedir = os.path.abspath(os.path.dirname(__file__))
+DATABASE_PATH = os.path.join(basedir, 'database', 'database.db')
+
     # Великі округи
     c.execute('''
         CREATE TABLE IF NOT EXISTS big_districts (
