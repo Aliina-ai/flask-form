@@ -340,17 +340,18 @@ def delete_small(id):
 # ======= СТАРШІ =======
 @app.route('/elder_list')
 def elder_list():
-    if 'username' not in session:
-        return redirect(url_for('login'))
-
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('SELECT * FROM elders ORDER BY id')
-    elders = cur.fetchall()
-    cur.close()
-    conn.close()
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cursor.execute("SELECT * FROM elders ORDER BY id DESC")
+        elders = cursor.fetchall()
+    except Exception as e:
+        print("Помилка при отриманні анкет старших:", e)
+        elders = []
+    finally:
+        if conn:
+            conn.close()
     return render_template('elder_list.html', elders=elders)
-
 
 @app.route('/add_elder', methods=['GET', 'POST'])
 def add_elder():
