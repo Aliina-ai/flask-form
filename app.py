@@ -11,7 +11,7 @@ def init_db():
     c = conn.cursor()
 
 if not os.path.exists('database.db'):
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect('DATABASE.PATH)
     c = conn.cursor()
 
 import os
