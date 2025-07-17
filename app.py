@@ -461,6 +461,60 @@ def delete_elder(id):
     conn.close()
     return redirect(url_for('elder_list'))
 
+# 🔐 Параметри підключення до Supabase PostgreSQL
+DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql://postgres:0esz257C@db.pexbjymznemvuxwgoeid.supabase.co:5432/postgres")
+
+def get_connection():
+    return psycopg2.connect(DATABASE_URL)
+
+@app.route('/')
+def index():
+    return render_template('form.html')
+
+@app.route('/submit', methods=['POST'])
+def submit():
+    # Збір даних з форми
+    big_district = request.form['big_district']
+    small_district = request.form['small_district']
+    location = request.form['location']
+    last_name = request.form['last_name']
+    first_name = request.form['first_name']
+    middle_name = request.form['middle_name']
+    phone = request.form['phone']
+    address = request.form['address']
+    birthdate = request.form['birthdate']
+    subscriber_count = int(request.form['subscriber_count'])
+    newspaper_count = int(request.form['newspaper_count'])
+
+    # Підключення до бази та запис
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO elders (
+                big_district, small_district, location,
+                last_name, first_name, middle_name,
+                phone, address, birthdate,
+                subscriber_count, newspaper_count
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (
+            big_district, small_district, location,
+            last_name, first_name, middle_name,
+            phone, address, birthdate,
+            subscriber_count, newspaper_count
+        ))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return redirect(url_for('success'))
+
+    except Exception as e:
+        return f"❌ Помилка збереження: {e}"
+
+@app.route('/success')
+def success():
+    return "✅ Дані збережено успішно!"
+
 
 @app.route('/subscriber_list')
 def subscriber_list():
