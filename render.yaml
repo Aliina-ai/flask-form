@@ -1,8 +1,11 @@
 services:
   - type: web
-    name: flask-form
+    name: your-app-name
     env: python
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "python app.py"
-    plan: free
-    rootDir: .
+    buildCommand: ""
+    startCommand: python app.py
+    envVars:
+      - key: DATABASE_URL
+        fromDotEnv: true
+      - key: SECRET_KEY
+        fromDotEnv: true
