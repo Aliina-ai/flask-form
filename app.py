@@ -15,7 +15,7 @@ def get_db_connection():
     return psycopg2.connect(DATABASE_URL)
 
         # Великі округи
-        c.execute('''
+       c.execute('''
             CREATE TABLE IF NOT EXISTS big_districts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 district_number TEXT NOT NULL,
