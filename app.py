@@ -461,30 +461,44 @@ def delete_elder(id):
     conn.close()
     return redirect(url_for('elder_list'))
 
-# 🔐 Параметри підключення до Supabase PostgreSQL
-DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql://postgres:0esz257C@db.pexbjymznemvuxwgoeid.supabase.co:5432/postgres")
+@app.route('/edit_elder/<int:elder_id>', methods=['GET', 'POST'])
+def edit_elder(elder_id):
+    elder = Elder.query.get_or_404(elder_id)
 
-def get_connection():
-    return psycopg2.connect(DATABASE_URL)
+    if request.method == 'POST':
+        elder.small_district = int(request.form['small_district'])
+        elder.location = request.form.get('location') or None
+        elder.last_name = request.form.get('last_name') or None
+        elder.first_name = request.form.get('first_name') or None
+        elder.middle_name = request.form.get('middle_name') or None
+        elder.phone = request.form.get('phone') or None
+        elder.address = request.form.get('address') or None
+        elder.birth_date = request.form.get('birth_date') or None
+        elder.subscribers = request.form.get('subscribers') or None
+        elder.newspapers = request.form.get('newspapers') or None
 
-@app.route('/')
-def index():
-    return render_template('form.html')
+        # Визначення великого округу
+        sd = elder.small_district
+        if 1 <= sd <= 7:
+            elder.big_district = 1
+        elif 8 <= sd <= 14:
+            elder.big_district = 2
+        elif 15 <= sd <= 19:
+            elder.big_district = 3
+        elif 20 <= sd <= 28:
+            elder.big_district = 4
+        elif 29 <= sd <= 35:
+            elder.big_district = 5
+        elif 36 <= sd <= 42:
+            elder.big_district = 6
+        else:
+            elder.big_district = None
 
-@app.route('/submit', methods=['POST'])
-def submit():
-    # Збір даних з форми
-    big_district = request.form['big_district']
-    small_district = request.form['small_district']
-    location = request.form['location']
-    last_name = request.form['last_name']
-    first_name = request.form['first_name']
-    middle_name = request.form['middle_name']
-    phone = request.form['phone']
-    address = request.form['address']
-    birthdate = request.form['birthdate']
-    subscriber_count = int(request.form['subscriber_count'])
-    newspaper_count = int(request.form['newspaper_count'])
+        db.session.commit()
+        return redirect(url_for('elder_list'))
+
+    return render_template('edit_elder.html', elder=elder)
+
 
 @app.route('/subscriber_list')
 def subscriber_list():
