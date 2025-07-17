@@ -82,13 +82,13 @@
         <input type="text" name="address" id="address" value="{{ elder.address or '' }}">
 
         <label for="birth_date">Дата народження</label>
-        <input type="date" name="birth_date" id="birth_date" value="{{ elder.birth_date or '' }}">
+        <input type="date" name="birth_date" id="birth_date" value="{{ elder.birthdate or '' }}">
 
         <label for="subscribers">Кількість підписників</label>
-        <input type="number" name="subscribers" id="subscribers" value="{{ elder.subscribers or '' }}">
+        <input type="number" name="subscribers" id="subscribers_count" value="{{ elder.subscribers_count or '' }}">
 
         <label for="newspapers">Кількість газет</label>
-        <input type="number" name="newspapers" id="newspapers" value="{{ elder.newspapers or '' }}">
+        <input type="number" name="newspapers" id="nsubscriber_count" value="{{ elder.newspapers_count or '' }}">
 
         <div class="buttons">
             <a href="{{ url_for('elder_list') }}" class="btn">Назад до списку</a>
