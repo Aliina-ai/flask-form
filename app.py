@@ -1,80 +1,76 @@
-import sqlite3
 import os
+import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key_here'  # заміни на свій секретний ключ
+app.secret_key = os.environ.get('SECRET_KEY', 'fallback_secret_key')  # секретний ключ із .env
 
-# ========== Ініціалізація бази ==========
+# ======= Налаштування шляху до бази даних =======
+DATABASE = os.environ.get('DATABASE_PATH', 'database.db')
+
+# ======= Ініціалізація бази даних =======
 def init_db():
-    conn = sqlite3.connect('database.db')
-    c = conn.cursor()
+    if not os.path.exists(DATABASE):
+        conn = sqlite3.connect(DATABASE)
+        c = conn.cursor()
 
-if not os.path.exists('database.db'):
-    conn = sqlite3.connect('DATABASE.PATH)
-    c = conn.cursor()
+        # Великі округи
+        c.execute('''
+            CREATE TABLE IF NOT EXISTS big_districts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                district_number TEXT NOT NULL,
+                last_name TEXT,
+                first_name TEXT,
+                middle_name TEXT,
+                phone TEXT,
+                pickup_points TEXT
+            )
+        ''')
 
-import os
-basedir = os.path.abspath(os.path.dirname(__file__))
-DATABASE_PATH = os.path.join(basedir, 'database', 'database.db')
+        # Малі округи
+        c.execute('''
+            CREATE TABLE IF NOT EXISTS small_districts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                big_district TEXT,
+                local_number TEXT NOT NULL,
+                last_name TEXT,
+                first_name TEXT,
+                middle_name TEXT,
+                address TEXT,
+                phone TEXT,
+                birth_date TEXT,
+                location TEXT
+            )
+        ''')
 
-    # Великі округи
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS big_districts (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            district_number TEXT NOT NULL,
-            last_name TEXT,
-            first_name TEXT,
-            middle_name TEXT,
-            phone TEXT,
-            pickup_points TEXT
-        )
-    ''')
+        # Старші
+        c.execute('''
+            CREATE TABLE IF NOT EXISTS elders (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                big_district TEXT,
+                small_district TEXT,
+                location TEXT,
+                last_name TEXT,
+                first_name TEXT,
+                middle_name TEXT,
+                phone TEXT,
+                address TEXT,
+                birthdate TEXT,
+                subscriber_count INTEGER,
+                newspaper_count INTEGER
+            )
+        ''')
 
-    # Малі округи (Великий округ перший!)
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS small_districts (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            big_district TEXT,
-            local_number TEXT NOT NULL,
-            last_name TEXT,
-            first_name TEXT,
-            middle_name TEXT,
-            address TEXT,
-            phone TEXT,
-            birth_date TEXT,
-            location TEXT
-        )
-    ''')
+        conn.commit()
+        conn.close()
 
-    # Старші
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS elders (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            big_district TEXT,
-            small_district TEXT,
-            location TEXT,
-            last_name TEXT,
-            first_name TEXT,
-            middle_name TEXT,
-            phone TEXT,
-            address TEXT,
-            birthdate TEXT,
-            subscriber_count INTEGER,
-            newspaper_count INTEGER
-        )
-    ''')
-
-    conn.commit()
-    conn.close()
-
-# ========== Користувачі ==========
+# ======= Користувачі =======
 users = {
     'alina01': {'password': '0esz257C', 'role': 'admin'},
-    'natalia01': {'password': 'gY7zBv3p', 'role': 'operator'}  # Згенерований пароль
+    'natalia01': {'password': 'gY7zBv3p', 'role': 'operator'}
 }
 
-# ========== Авторизація ==========
+# ======= Авторизація =======
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -94,27 +90,25 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
-# ========== Головна сторінка ==========
 @app.route('/home')
 def home():
     if 'username' not in session:
         return redirect(url_for('login'))
     return render_template('home.html')
 
-# ========== Список ВЕЛИКИХ округів ==========
+# ======= ВЕЛИКІ округи =======
 @app.route('/big_list')
 def big_list():
     if 'username' not in session:
         return redirect(url_for('login'))
 
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
     c.execute('SELECT * FROM big_districts')
     bigs = c.fetchall()
     conn.close()
     return render_template('big_list.html', bigs=bigs)
 
-# ========== Додавання анкети великого округу ==========
 @app.route('/add_big', methods=['GET', 'POST'])
 def add_big():
     if 'username' not in session:
@@ -131,7 +125,7 @@ def add_big():
         phone = request.form['phone']
         pickup_points = ', '.join(request.form.getlist('pickup_points'))
 
-        conn = sqlite3.connect('database.db')
+        conn = sqlite3.connect(DATABASE)
         c = conn.cursor()
         c.execute('''
             INSERT INTO big_districts 
@@ -144,26 +138,12 @@ def add_big():
 
     return render_template('add_big.html', districts=districts, locations=locations)
 
-# 🗑️ Видалення відповідального
-@app.route('/delete_big/<int:id>', methods=['POST'])
-def delete_big(id):
-    if 'username' not in session:
-        return redirect(url_for('login'))
-
-    conn = sqlite3.connect('database.db')
-    c = conn.cursor()
-    c.execute("DELETE FROM big_districts WHERE id = ?", (id,))
-    conn.commit()
-    conn.close()
-    return redirect(url_for('big_list'))
-
-# ✏️ Редагування відповідального
 @app.route('/edit_big/<int:id>', methods=['GET', 'POST'])
 def edit_big(id):
     if 'username' not in session:
         return redirect(url_for('login'))
 
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
 
     if request.method == 'POST':
@@ -174,15 +154,16 @@ def edit_big(id):
         phone = request.form['phone']
         pickup_points = ', '.join(request.form.getlist('pickup_points'))
 
-        c.execute('''UPDATE big_districts 
-                     SET district_number=?, last_name=?, first_name=?, middle_name=?, phone=?, pickup_points=? 
-                     WHERE id=?''',
-                  (district_number, last_name, first_name, middle_name, phone, pickup_points, id))
+        c.execute('''
+            UPDATE big_districts 
+            SET district_number=?, last_name=?, first_name=?, middle_name=?, phone=?, pickup_points=? 
+            WHERE id=?
+        ''', (district_number, last_name, first_name, middle_name, phone, pickup_points, id))
         conn.commit()
         conn.close()
         return redirect(url_for('big_list'))
 
-    c.execute("SELECT * FROM big_districts WHERE id = ?", (id,))
+    c.execute('SELECT * FROM big_districts WHERE id = ?', (id,))
     big = c.fetchone()
     conn.close()
 
@@ -192,13 +173,25 @@ def edit_big(id):
 
     return render_template('edit_big.html', big=big, districts=districts, locations=locations, selected_locations=selected_locations)
 
-# ========== Список МАЛИХ округів ==========
+@app.route('/delete_big/<int:id>', methods=['POST'])
+def delete_big(id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    conn = sqlite3.connect(DATABASE)
+    c = conn.cursor()
+    c.execute("DELETE FROM big_districts WHERE id = ?", (id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('big_list'))
+
+# ======= МАЛІ округи =======
 @app.route('/small_list')
 def small_list():
     if 'username' not in session:
         return redirect(url_for('login'))
 
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
     c.execute('SELECT * FROM small_districts')
     smalls = c.fetchall()
@@ -206,7 +199,6 @@ def small_list():
 
     return render_template('small_list.html', smalls=smalls)
 
-# ========== Додавання анкети малого округу ==========
 @app.route('/add_small', methods=['GET', 'POST'])
 def add_small():
     if 'username' not in session:
@@ -217,18 +209,12 @@ def add_small():
 
     def get_big_district(number):
         n = int(number)
-        if 1 <= n <= 7:
-            return "1"
-        elif 8 <= n <= 14:
-            return "2"
-        elif 15 <= n <= 19:
-            return "3"
-        elif 20 <= n <= 28:
-            return "4"
-        elif 29 <= n <= 35:
-            return "5"
-        elif 36 <= n <= 42:
-            return "6"
+        if 1 <= n <= 7: return "1"
+        elif 8 <= n <= 14: return "2"
+        elif 15 <= n <= 19: return "3"
+        elif 20 <= n <= 28: return "4"
+        elif 29 <= n <= 35: return "5"
+        elif 36 <= n <= 42: return "6"
         return "Невідомо"
 
     if request.method == 'POST':
@@ -242,7 +228,7 @@ def add_small():
         location = request.form['location']
         big_district = get_big_district(local_number)
 
-        conn = sqlite3.connect('database.db')
+        conn = sqlite3.connect(DATABASE)
         c = conn.cursor()
         c.execute('''
             INSERT INTO small_districts 
@@ -254,13 +240,8 @@ def add_small():
 
         return redirect(url_for('small_list'))
 
-    return render_template(
-        'add_small.html',
-        local_numbers=local_numbers,
-        locations=locations
-    )
+    return render_template('add_small.html', local_numbers=local_numbers, locations=locations)
 
-# ========== Редагування анкети малого округу ==========
 @app.route('/edit_small/<int:id>', methods=['GET', 'POST'])
 def edit_small(id):
     if 'username' not in session:
@@ -271,21 +252,15 @@ def edit_small(id):
 
     def get_big_district(number):
         n = int(number)
-        if 1 <= n <= 7:
-            return "1"
-        elif 8 <= n <= 14:
-            return "2"
-        elif 15 <= n <= 19:
-            return "3"
-        elif 20 <= n <= 28:
-            return "4"
-        elif 29 <= n <= 35:
-            return "5"
-        elif 36 <= n <= 42:
-            return "6"
+        if 1 <= n <= 7: return "1"
+        elif 8 <= n <= 14: return "2"
+        elif 15 <= n <= 19: return "3"
+        elif 20 <= n <= 28: return "4"
+        elif 29 <= n <= 35: return "5"
+        elif 36 <= n <= 42: return "6"
         return "Невідомо"
 
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
 
     if request.method == 'POST':
@@ -307,7 +282,6 @@ def edit_small(id):
             WHERE id = ?
         ''', (big_district, local_number, last_name, first_name, middle_name,
               address, phone, birth_date, location, id))
-
         conn.commit()
         conn.close()
         return redirect(url_for('small_list'))
@@ -318,14 +292,12 @@ def edit_small(id):
 
     return render_template('edit_small.html', small=small, locations=locations, local_numbers=local_numbers)
 
-# ========== Видалення  анкети малого округа ==========
-
 @app.route('/delete_small/<int:id>', methods=['POST'])
 def delete_small(id):
     if 'username' not in session:
         return redirect(url_for('login'))
 
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
     c.execute('DELETE FROM small_districts WHERE id = ?', (id,))
     conn.commit()
@@ -333,19 +305,18 @@ def delete_small(id):
 
     return redirect(url_for('small_list'))
 
-# ========== Список Старших ==========
+# ======= СТАРШІ =======
 @app.route('/elder_list')
 def elder_list():
     if 'username' not in session:
         return redirect(url_for('login'))
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
     c.execute('SELECT * FROM elders')
     elders = c.fetchall()
     conn.close()
     return render_template('elder_list.html', elders=elders)
 
-# ========== Додавати Старших ==========
 @app.route('/add_elder', methods=['GET', 'POST'])
 def add_elder():
     if 'username' not in session:
@@ -364,7 +335,7 @@ def add_elder():
         subscriber_count = request.form.get('subscriber_count') or '0'
         newspaper_count = request.form.get('newspaper_count') or '0'
 
-        conn = sqlite3.connect('database.db')
+        conn = sqlite3.connect(DATABASE)
         c = conn.cursor()
         c.execute('''
             INSERT INTO elders (
@@ -386,24 +357,16 @@ def add_elder():
 
     return render_template('add_elder.html')
 
-# ========== Редагувати Старших ==========
-
-from flask import render_template, redirect, url_for, request, session, flash
-import sqlite3
-
 @app.route('/edit_elder/<int:elder_id>', methods=['GET', 'POST'])
 def edit_elder(elder_id):
-    # Перевірка авторизації
     if 'username' not in session:
         return redirect(url_for('login'))
 
-    # Підключення до бази
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
     if request.method == 'POST':
-        # Збір даних з форми
         big_district = request.form.get('big_district') or ''
         small_district = request.form.get('small_district') or ''
         location = request.form.get('location') or ''
@@ -416,7 +379,6 @@ def edit_elder(elder_id):
         subscriber_count = request.form.get('subscriber_count') or '0'
         newspaper_count = request.form.get('newspaper_count') or '0'
 
-        # Оновлення даних
         c.execute('''
             UPDATE elders SET
                 big_district = ?, small_district = ?, location = ?,
@@ -437,7 +399,6 @@ def edit_elder(elder_id):
         flash("Анкету оновлено успішно!", "success")
         return redirect(url_for('elder_list'))
 
-    # GET-запит: отримати анкету
     c.execute('SELECT * FROM elders WHERE id = ?', (elder_id,))
     elder = c.fetchone()
     conn.close()
@@ -447,20 +408,17 @@ def edit_elder(elder_id):
         return redirect(url_for('elder_list'))
 
     return render_template('edit_elder.html', elder=elder)
-    
-# ========== Видаляти Старших ==========
+
 @app.route('/delete_elder/<int:id>', methods=['POST'])
 def delete_elder(id):
     if 'username' not in session:
         return redirect(url_for('login'))
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
     c.execute('DELETE FROM elders WHERE id=?', (id,))
     conn.commit()
     conn.close()
     return redirect(url_for('elder_list'))
-
-# ========== Заглушки для решти ==========
 
 @app.route('/subscriber_list')
 def subscriber_list():
@@ -468,8 +426,8 @@ def subscriber_list():
         return redirect(url_for('login'))
     return "Список підписників (тимчасово)"
 
-# ========== Запуск ==========
+# ======= Запуск =======
 if __name__ == '__main__':
-    init_db()  # ⬅️ Перший запуск створює базу
+    init_db()
     port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port)
