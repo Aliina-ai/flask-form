@@ -340,9 +340,9 @@ def delete_small(id):
 # ======= СТАРШІ =======
 @app.route('/elder_list')
 def elder_list():
-     if 'username' not in session:
+    if 'username' not in session:
         return redirect(url_for('login'))
-    return "Список підписників (тимчасово)"
+    return "Список старших (тимчасово)"
 
 
 @app.route('/subscriber_list')
