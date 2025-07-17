@@ -10,6 +10,10 @@ def init_db():
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
 
+if not os.path.exists('database.db'):
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+
     # Великі округи
     c.execute('''
         CREATE TABLE IF NOT EXISTS big_districts (
