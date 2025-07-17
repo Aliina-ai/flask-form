@@ -399,16 +399,17 @@ def edit_elder(elder_id):
     elder = Elder.query.get_or_404(elder_id)
 
     if request.method == 'POST':
-        elder.small_district = int(request.form['small_district'])
-        elder.location = request.form.get('location') or None
-        elder.last_name = request.form.get('last_name') or None
-        elder.first_name = request.form.get('first_name') or None
-        elder.middle_name = request.form.get('middle_name') or None
-        elder.phone = request.form.get('phone') or None
-        elder.address = request.form.get('address') or None
-        elder.birth_date = request.form.get('birth_date') or None
-        elder.subscribers = request.form.get('subscribers') or None
-        elder.newspapers = request.form.get('newspapers') or None
+        small_district = request.form.get('small_district') or ''
+        big_district = request.form.get('big_district') or ''
+        location = request.form.get('location') or ''
+        last_name = request.form.get('last_name') or ''
+        first_name = request.form.get('first_name') or ''
+        middle_name = request.form.get('middle_name') or ''
+        phone = request.form.get('phone') or ''
+        address = request.form.get('address') or ''
+        birthdate = request.form.get('birthdate') or ''
+        subscriber_count = request.form.get('subscriber_count') or 0
+        newspaper_count = request.form.get('newspaper_count') or 0
 
         db.session.commit()
         return redirect(url_for('elder_list'))
