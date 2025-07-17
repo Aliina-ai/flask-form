@@ -5,18 +5,21 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-SECRET_KEY = os.getenv("SECRET_KEY", "your_default_secret_key")
-
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'mysecretkey')
 
 DATABASE_URL = os.getenv('DATABASE_URL')
+if not DATABASE_URL:
+    raise ValueError("❌ DATABASE_URL не заданий у змінних середовища!")
 
 
 def get_db_connection():
-    conn = psycopg2.connect(DATABASE_URL)
-    return conn
+    try:
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        return conn
+    except psycopg2.Error as e:
+        print("⚠️ Помилка підключення до бази даних:", e)
+        raise
 
 
 def init_db():
@@ -397,7 +400,6 @@ def edit_elder(elder_id):
         return redirect(url_for('login'))
 
     conn = get_db_connection()
-    conn.autocommit = False
     cur = conn.cursor()
 
     if request.method == 'POST':
@@ -465,9 +467,3 @@ def subscriber_list():
     if 'username' not in session:
         return redirect(url_for('login'))
     return "Список підписників (тимчасово)"
-
-
-if __name__ == '__main__':
-    init_db()
-    port = int(os.environ.get('PORT', 10000))
-    app.run(host='0.0.0.0', port=port, debug=True)
