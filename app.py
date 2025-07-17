@@ -486,36 +486,6 @@ def submit():
     subscriber_count = int(request.form['subscriber_count'])
     newspaper_count = int(request.form['newspaper_count'])
 
-    # Підключення до бази та запис
-    try:
-        conn = get_connection()
-        cur = conn.cursor()
-        cur.execute("""
-            INSERT INTO elders (
-                big_district, small_district, location,
-                last_name, first_name, middle_name,
-                phone, address, birthdate,
-                subscriber_count, newspaper_count
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (
-            big_district, small_district, location,
-            last_name, first_name, middle_name,
-            phone, address, birthdate,
-            subscriber_count, newspaper_count
-        ))
-        conn.commit()
-        cur.close()
-        conn.close()
-        return redirect(url_for('success'))
-
-    except Exception as e:
-        return f"❌ Помилка збереження: {e}"
-
-@app.route('/success')
-def success():
-    return "✅ Дані збережено успішно!"
-
-
 @app.route('/subscriber_list')
 def subscriber_list():
     if 'username' not in session:
