@@ -350,3 +350,9 @@ def subscriber_list():
     if 'username' not in session:
         return redirect(url_for('login'))
     return "Список підписників (тимчасово)"
+
+# ========== Запуск ==========
+if __name__ == '__main__':
+    init_db()  # ⬅️ Перший запуск створює базу
+    port = int(os.environ.get('PORT', 10000))
+    app.run(host='0.0.0.0', port=port)
