@@ -394,6 +394,27 @@ def add_elder():
 
     return render_template('add_elder.html')
 
+@app.route('/edit_elder/<int:elder_id>', methods=['GET', 'POST'])
+def edit_elder(elder_id):
+    elder = Elder.query.get_or_404(elder_id)
+
+    if request.method == 'POST':
+        elder.small_district = int(request.form['small_district'])
+        elder.location = request.form.get('location') or None
+        elder.last_name = request.form.get('last_name') or None
+        elder.first_name = request.form.get('first_name') or None
+        elder.middle_name = request.form.get('middle_name') or None
+        elder.phone = request.form.get('phone') or None
+        elder.address = request.form.get('address') or None
+        elder.birth_date = request.form.get('birth_date') or None
+        elder.subscribers = request.form.get('subscribers') or None
+        elder.newspapers = request.form.get('newspapers') or None
+
+        db.session.commit()
+        return redirect(url_for('elder_list'))
+
+    return render_template('edit_elder.html', elder=elder)
+
 @app.route('/subscriber_list')
 def subscriber_list():
     if 'username' not in session:
