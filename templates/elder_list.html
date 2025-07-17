@@ -13,84 +13,44 @@
         h2 {
             text-align: center;
             color: #2c3e50;
-            margin-bottom: 20px;
-        }
-        .top-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        .btn {
-            background-color: #2d6ca2;
-            color: white;
-            padding: 10px 18px;
-            border: none;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 15px;
-            cursor: pointer;
-        }
-        .btn:hover {
-            background-color: #1e4e79;
-        }
-        .search-box {
-            text-align: right;
-            margin-bottom: 10px;
-        }
-        .search-box input {
-            padding: 8px 12px;
-            font-size: 15px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            width: 300px;
-        }
-        .table-container {
-           overflow-x: auto;
-           background-color: #fff;
-           border-radius: 6px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            background-color: #fff;
-            min-width: 1000px;
+            margin-top: 25px;
         }
         th, td {
             border: 1px solid #ccc;
-            padding: 10px 12px;
+            padding: 10px;
             text-align: center;
         }
         th {
             background-color: #eaf0f6;
-            font-weight: 600;
         }
         .actions {
             display: flex;
             justify-content: center;
             gap: 10px;
         }
-        .actions form {
-            display: inline;
-        }
-        .actions button {
-            background: none;
+        .btn {
+            background-color: #2d6ca2;
+            color: white;
+            padding: 8px 14px;
             border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
             cursor: pointer;
-            font-size: 16px;
+        }
+        .btn:hover {
+            background-color: #1e4e79;
+        }
+        .top-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
         }
     </style>
-    <script>
-        function searchTable() {
-            const input = document.getElementById("searchInput");
-            const filter = input.value.toLowerCase();
-            const rows = document.querySelectorAll("table tbody tr");
-
-            rows.forEach(row => {
-                const text = row.innerText.toLowerCase();
-                row.style.display = text.includes(filter) ? "" : "none";
-            });
-        }
-    </script>
 </head>
 <body>
 
@@ -101,46 +61,47 @@
     <a href="{{ url_for('add_elder') }}" class="btn">➕ Додати анкету</a>
 </div>
 
-<div class="search-box">
-    <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Пошук у таблиці...">
-</div>
-
-<div class="table-container">
-    <table>
-        <thead>
-            <tr>
-                <th>Великий округ</th>
-                <th>Малий округ</th>
-                <th>Локація</th>
-                <th>Прізвище</th>
-                <th>Імʼя</th>
-                <th>По батькові</th>
-                <th>Телефон</th>
-                <th>Адреса</th>
-                <th>Дата народження</th>
-                <th>Кількість підписників</th>
-                <th>Кількість газет</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for e in elders %}
-            <tr>
-                <td>{{ e["big_district"] }}</td>
-                <td>{{ e["small_district"] }}</td>
-                <td>{{ e["location"] }}</td>
-                <td>{{ e["last_name"] }}</td>
-                <td>{{ e["first_name"] }}</td>
-                <td>{{ e["patronymic"] }}</td>
-                <td>{{ e["phone"] }}</td>
-                <td>{{ e["address"] }}</td>
-                <td>{{ e["birth_date"] }}</td>
-                <td>{{ e["subscribers"] }}</td>
-                <td>{{ e["newspapers"] }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+<table>
+    <thead>
+        <tr>
+            <th>Великий округ</th>
+            <th>Малий округ</th>
+            <th>Локація</th>
+            <th>Прізвище</th>
+            <th>Імʼя</th>
+            <th>По батькові</th>
+            <th>Телефон</th>
+            <th>Адреса</th>
+            <th>Дата нар.</th>
+            <th>Кількість підписників</th>
+            <th>Кількість газет</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for e in elders %}
+        <tr>
+            <td>{{ e[1] }}</td>
+            <td>{{ e[2] }}</td>
+            <td>{{ e[3] }}</td>
+            <td>{{ e[4] }}</td>
+            <td>{{ e[5] }}</td>
+            <td>{{ e[6] }}</td>
+            <td>{{ e[7] }}</td>
+            <td>{{ e[8] }}</td>
+            <td>{{ e[9] }}</td>
+            <td>{{ e[10] }}</td>
+            <td>{{ e[11] }}</td>
+            <td class="actions">
+                <a href="{{ url_for('edit_elder', id=e[0]) }}">✏️</a>
+                <form action="{{ url_for('delete_elder', id=e[0]) }}" method="POST" style="display:inline;">
+                    <button type="submit" onclick="return confirm('Видалити анкету?')">🗑</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 </body>
 </html>
