@@ -393,74 +393,6 @@ def add_elder():
 
     return render_template('add_elder.html')
 
-
-@app.route('/edit_elder/<int:elder_id>', methods=['GET', 'POST'])
-def edit_elder(elder_id):
-    if 'username' not in session:
-        return redirect(url_for('login'))
-
-    conn = get_db_connection()
-    cur = conn.cursor()
-
-    if request.method == 'POST':
-        big_district = request.form.get('big_district') or ''
-        small_district = request.form.get('small_district') or ''
-        location = request.form.get('location') or ''
-        last_name = request.form.get('last_name') or ''
-        first_name = request.form.get('first_name') or ''
-        middle_name = request.form.get('middle_name') or ''
-        phone = request.form.get('phone') or ''
-        address = request.form.get('address') or ''
-        birthdate = request.form.get('birthdate') or ''
-        subscriber_count = request.form.get('subscriber_count') or 0
-        newspaper_count = request.form.get('newspaper_count') or 0
-
-        cur.execute('''
-            UPDATE elders SET
-                big_district = %s, small_district = %s, location = %s,
-                last_name = %s, first_name = %s, middle_name = %s,
-                phone = %s, address = %s, birthdate = %s,
-                subscriber_count = %s, newspaper_count = %s
-            WHERE id = %s
-        ''', (
-            big_district, small_district, location,
-            last_name, first_name, middle_name,
-            phone, address, birthdate,
-            subscriber_count, newspaper_count,
-            elder_id
-        ))
-
-        conn.commit()
-        cur.close()
-        conn.close()
-        flash("Анкету оновлено успішно!", "success")
-        return redirect(url_for('elder_list'))
-
-    cur.execute('SELECT * FROM elders WHERE id = %s', (elder_id,))
-    elder = cur.fetchone()
-    cur.close()
-    conn.close()
-
-    if elder is None:
-        flash("Анкета не знайдена.", "error")
-        return redirect(url_for('elder_list'))
-
-    return render_template('edit_elder.html', elder=elder)
-
-
-@app.route('/delete_elder/<int:id>', methods=['POST'])
-def delete_elder(id):
-    if 'username' not in session:
-        return redirect(url_for('login'))
-
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('DELETE FROM elders WHERE id = %s', (id,))
-    conn.commit()
-    cur.close()
-    conn.close()
-    return redirect(url_for('elder_list'))
-
 @app.route('/edit_elder/<int:elder_id>', methods=['GET', 'POST'])
 def edit_elder(elder_id):
     elder = Elder.query.get_or_404(elder_id)
@@ -498,6 +430,20 @@ def edit_elder(elder_id):
         return redirect(url_for('elder_list'))
 
     return render_template('edit_elder.html', elder=elder)
+
+
+@app.route('/delete_elder/<int:id>', methods=['POST'])
+def delete_elder(id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('DELETE FROM elders WHERE id = %s', (id,))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return redirect(url_for('elder_list'))
 
 
 @app.route('/subscriber_list')
