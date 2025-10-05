@@ -1,139 +1,96 @@
-from flask import Flask, render_template, request
-import sqlite3
-import os
+import csv
+import time
+from telethon import TelegramClient, errors, functions
+from telethon.tl.types import InputPhoneContact
 
-app = Flask(__name__)
+# =========================
+# Налаштування
+# =========================
+api_id = 28384371             # ваш api_id
+api_hash = 8f3931fd2cdf0a1597c8a55b480f737c    # ваш api_hash
+sender_phone = +380965829257 # номер вашого акаунта Telegram
+invite_link = https://t.me/BilaTserkvaToday  # посилання на канал
+csv_file = 'phones.csv'        # файл зі списком номерів
+send_per_day = 20              # ліміт на день
+pause_between_messages = 30    # секунда між повідомленнями
 
-DB_NAME = 'data.db'
+# Ваш текст запрошення:
+message_text = (
+    📢 Шановні мешканці та гості Білої Церкви!
 
-def init_db():
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS responses (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT,
-            email TEXT
-        )
-    ''')
-    conn.commit()
-    conn.close()
+Запрошуємо вас долучитися до Telegram-каналу “Біла Церква Сьогодні” – вашого надійного джерела актуальної інформації!
 
-    cur.execute('''
-        CREATE TABLE IF NOT EXISTS big_districts (
-            id SERIAL PRIMARY KEY,
-            district_number TEXT NOT NULL,
-            last_name TEXT,
-            first_name TEXT,
-            middle_name TEXT,
-            phone TEXT,
-            pickup_points TEXT
-        )
-    ''')
+🔹 Оперативні новини міста та України
+🔹 Корисні поради та цікаві факти
+🔹 Анонси важливих подій і заходів
+🔹 Атмосферні ранкові публікації
 
-    cur.execute('''
-        CREATE TABLE IF NOT EXISTS small_districts (
-            id SERIAL PRIMARY KEY,
-            big_district TEXT,
-            local_number TEXT NOT NULL,
-            last_name TEXT,
-            first_name TEXT,
-            middle_name TEXT,
-            address TEXT,
-            phone TEXT,
-            birth_date TEXT,
-            location TEXT
-        )
-    ''')
+Будьте завжди в курсі подій, які формують життя нашого міста.
+Підписуйтесь за посиланням:
+👉 https://t.me/BilaTserkvaToday
 
-    cur.execute('''
-        CREATE TABLE IF NOT EXISTS elders (
-            id SERIAL PRIMARY KEY,
-            big_district TEXT,
-            small_district TEXT,
-            location TEXT,
-            last_name TEXT,
-            first_name TEXT,
-            middle_name TEXT,
-            phone TEXT,
-            address TEXT,
-            birthdate TEXT,
-            subscriber_count INTEGER,
-            newspaper_count INTEGER
-        )
-    ''')
+Ми раді вітати вас у нашій спільноті!
+)
 
-    conn.commit()
-    cur.close()
-    conn.close()
+# =========================
+# Підключення Telethon
+# =========================
+session_name = sender_phone.replace('+', '')  # назва файлу сесії
+client = TelegramClient(session_name, api_id, api_hash)
 
+async def main():
+    await client.start(phone=sender_phone)
+    print(f"Підключено як: {sender_phone}")
 
-# ======= Користувачі =======
-users = {
-    'alina01': {'password': '0esz257C', 'role': 'admin'},
-    'natalia01': {'password': 'gY7zBv3p', 'role': 'operator'}
-}
+    # Зчитуємо номери
+    phones = []
+    with open(csv_file, newline='', encoding='utf-8') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            if row:
+                ph = row[0].strip()
+                if ph:
+                    phones.append(ph)
 
+    # Завантажуємо лог тих, кому вже надіслали
+    sent_log = 'sent_log.txt'
+    sent = set()
+    try:
+        with open(sent_log, 'r', encoding='utf-8') as f:
+            for line in f:
+                sent.add(line.strip())
+    except FileNotFoundError:
+        pass
 
-# ======= Авторизація =======
-@app.route('/', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        login_user = request.form['login']
-        password = request.form['password']
-        user = users.get(login_user)
-        if user and user['password'] == password:
-            session['username'] = login_user
-            session['role'] = user['role']
-            return redirect(url_for('home'))
-        else:
-            return render_template('login.html', error="Невірний логін або пароль")
-    return render_template('login.html')
+    # Вибираємо 20 нових номерів
+    to_send = [p for p in phones if p not in sent][:send_per_day]
 
+    for ph in to_send:
+        try:
+            contact = InputPhoneContact(client_id=0, phone=ph, first_name="Friend", last_name="")
+            imported = await client(functions.contacts.ImportContactsRequest(contacts=[contact]))
+            if not imported.users:
+                print(f"✖ {ph} не знайдено в Telegram")
+                continue
+            user = imported.users[0]
+            await client.send_message(user.id, message_text)
+            print(f"✅ Надіслано {ph}")
 
-@app.route('/logout', methods=['POST'])
-def logout():
-    session.clear()
-    return redirect(url_for('login'))
+            # Логуємо номер
+            with open(sent_log, 'a', encoding='utf-8') as f:
+                f.write(ph + "\n")
 
+            time.sleep(pause_between_messages)
+        except errors.FloodWaitError as e:
+            print(f"⏸ Flood wait: {e.seconds} сек")
+            time.sleep(e.seconds + 5)
+        except Exception as e:
+            print(f"⚠️ Помилка {ph}: {e}")
+            continue
 
-@app.route('/home')
-def home():
-    if 'username' not in session:
-        return redirect(url_for('login'))
-    return render_template('home.html')
+    print("🎯 Надсилання завершено")
 
-
-# ======= ВЕЛИКІ округи =======
-@app.route('/big_list')
-def big_list():
-    if 'username' not in session:
-        return redirect(url_for('login'))
-    return "Список старших (тимчасово)"
-
-# ======= МАЛІ округи =======
-@app.route('/small_list')
-def small_list():
-    if 'username' not in session:
-        return redirect(url_for('login'))
-    return "Список старших (тимчасово)"
-
-# ======= СТАРШІ =======
-@app.route('/elder_list')
-def elder_list():
-    if 'username' not in session:
-        return redirect(url_for('login'))
-    return "Список старших (тимчасово)"
-
-
-@app.route('/subscriber_list')
-def subscriber_list():
-    if 'username' not in session:
-        return redirect(url_for('login'))
-    return "Список підписників (тимчасово)"
-
-# ========== Запуск ==========
 if __name__ == '__main__':
-    init_db()  # ⬅️ Перший запуск створює базу
-    port = int(os.environ.get('PORT', 10000))
-    app.run(host='0.0.0.0', port=port)
+    with client:
+        client.loop.run_until_complete(main())
+
