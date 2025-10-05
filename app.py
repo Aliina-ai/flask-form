@@ -7,9 +7,9 @@ from telethon.tl.types import InputPhoneContact
 # Налаштування
 # =========================
 api_id = 28384371             # ваш api_id
-api_hash = 8f3931fd2cdf0a1597c8a55b480f737c    # ваш api_hash
-sender_phone = +380965829257 # номер вашого акаунта Telegram
-invite_link = https://t.me/BilaTserkvaToday  # посилання на канал
+api_hash = "8f3931fd2cdf0a1597c8a55b480f737c"    # ваш api_hash
+sender_phone = "+380965829257" # номер вашого акаунта Telegram
+invite_link = "https://t.me/BilaTserkvaToday"  # посилання на канал
 csv_file = 'phones.csv'        # файл зі списком номерів
 send_per_day = 20              # ліміт на день
 pause_between_messages = 30    # секунда між повідомленнями
