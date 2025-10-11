@@ -1,0 +1,7 @@
+__pycache__/
+*.session
+*.log
+.env
+data/
+sent_log.txt
+phones.csv
